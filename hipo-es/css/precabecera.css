@@ -1,0 +1,13 @@
+#precabecera{
+	height:26px;
+	padding-top:8px;
+	overflow:hidden;
+	width:1015px;
+	float:left;
+	}
+	
+#precabecera > ul{float:right;}
+#precabecera ul li{}
+#precabecera ul li.atajos a{font-size: 12px;color:#fff; }
+#precabecera ul li.atajos span {padding: 0px 5px 0px 5px; color:#fff; font-size: 14px;}
+#precabecera ul li.carga_cajetin {}	/**/
