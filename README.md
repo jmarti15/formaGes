@@ -1,2 +1,2 @@
-# formaGes
+# trainingGes
 Training centers  management
