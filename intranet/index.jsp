@@ -73,6 +73,10 @@ out.println("bEntrant="+(bEntrant?"T":"F")+"  bLogin="+(bLogin?"T":"F")+"  bCons
 		}
 		if(bAccVal) {								// Tot ok
 			bMostraMenu=true;
+///
+System.out.println( "Opc0: "+sOpcions[0] );
+if( sOpcions.length ==2 ) System.out.println( "Opc1: "+sOpcions[1] );
+///
 			sOpc = sOpcions[0];
 		}
 	}
@@ -182,6 +186,27 @@ out.println("bEntrant="+(bEntrant?"T":"F")+"  bLogin="+(bLogin?"T":"F")+"  bCons
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Low Pressure Fitness Gestión</title>
 	<link type="image/x-icon" href="img/lpf13.ico" rel="shortcut icon">
+
+	<!--
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"></link>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"></link>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular-sanitize.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.min.js"></script>
+	-->
+	<!-- If you are not sure which module is missing, use the not minified angular.js which gives a readable error message -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.css"></link>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.css"></link>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular-sanitize.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.js"></script>
+
 	<link type="text/css" rel="stylesheet" charset="utf-8" href="css/estil.css">
 	<% if(bMostraMenu) { %><link type="text/css" rel="stylesheet" href="css/menu.css">	<% } %>
 	<script type="text/javascript" charset="utf-8" src="lib/sha2.js"></script>

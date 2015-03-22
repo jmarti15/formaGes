@@ -153,6 +153,36 @@ h2 {
 }
 
 /***********************  Llista estil ListBox  *****************************/
+div.llista {
+	background-color: #fbf3dc;	/* color daurat molt clar */
+	border: 1px solid #A3A3A3;
+	border-radius: 4px;
+	box-shadow: 0px 0px 2px #BF9527;		/* color daurat menú */
+}
+table.llista thead th
+{
+	border-top: 1px solid #C4CDEC;
+	border-bottom: 1px solid #C4CDEC;
+	background: #DFDFDF;
+	padding: 8px 5px;
+	font-weight: bold;
+	font-size: 14px;
+}
+table.llista td button {
+	background: none repeat scroll 0px 0px transparent;
+	cursor: pointer;
+}
+table.llista td button:hover {
+	text-decoration: underline;
+}
+table.llista td {
+	padding: 4px;
+	vertical-align: bottom;
+	border-bottom: 1px solid #C4CDEC;
+}
+table.llista tbody tr:hover {
+	background-color: #fbfbca
+}
 	/* regles pq es mostri l'scroll vertical*/
 table.llista {
     display: table;
@@ -173,7 +203,7 @@ table.llista tr {
     text-align: left;
 }
 table.llista th, table.llista td {
-/*    width: 33%;	*/
+    width: 33%;
 }
 
 /***********************    *****************************/
