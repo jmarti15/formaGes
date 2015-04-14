@@ -1,0 +1,23 @@
+<div class="modal-header">
+	<button class="close" ng-click="cancel()">&times;</button>
+	<h4 class="modal-title" id="myModalLabel">Detalle del nivel</h4>
+</div>
+
+<div class="modal-body">
+	<!-- {{codNiv}}: {{nomNiv}} -->
+	<form>
+		<div class="form-group">
+			<input type="text" id="nomID" class=" form-control" placeholder="Descripción" ng-model="nomNiv" ng-change="canvi()">
+		</div>
+	</form>
+</div>
+
+<div class="modal-footer">
+	<div class="alert alert-danger" role="alert" ng-show="delPremut">
+		  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		  Pulse otra vez para eliminar
+	</div>
+	<button class="btn btn-success" ng-show="!codNiv" ng-click="add()">Añadir</button>
+	<button class="btn btn-info" ng-show="codNiv" ng-click="mod()">Modificar</button>
+	<button class="btn" ng-class="delPremut ? 'btn-danger' : 'btn-warning'" ng-show="codNiv" ng-click="del()">Eliminar</button>
+</div>

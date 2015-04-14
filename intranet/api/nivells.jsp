@@ -2,29 +2,31 @@
 	import = "java.util.*"
 	import = "org.json.simple.*"
     pageEncoding="UTF-8"%>
-<%@ include file="../lib/dbInit.jsp" %>
+<%@ include file="../lib/funcions.jsp" %>
 <%
+	String sMtd = request.getMethod();
+//	request.getParameter("opc")
+System.out.println(sMtd);
+
+
+
+/*
+SELECT Codi, Nom AS Nivel FROM Nivells
+*/
+	String sSql = "SELECT Codi, Nom AS Nivel FROM Nivells";
+	String jsonString = sSelect2Json( sSql );
+/*
 	Connection conn = null;
 	String jsonString = "";
 	try {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
 		conn = DriverManager.getConnection(dbUrl,dbUser,dbPass);
 		if (conn != null) {
-			Statement stmt = conn.createStatement();
-/*
-SELECT I.Codi, Data as Fecha, A.Nom as Nombre, A.Cognoms as Apellidos, T.Nom as Tarifa, D.Nom as Descuento, 
-	IF(Tripartita, 'Sí', 'No') as Tripartita
-FROM Inscripcions I
-INNER JOIN Alumnes A ON A.Codi = I.Alumne
-INNER JOIN Tarifes T ON T.Codi = I.Tarifa
-INNER JOIN Descomptes D ON D.Codi = I.Descompte
-*/
-			String sSql = "SELECT I.Codi, Data as Fecha, A.Nom as Nombre, A.Cognoms as Apellidos, T.Nom as Tarifa, D.Nom as Descuento, ";
-			sSql += "IF(Tripartita, 'Sí', 'No') as Tripartita ";
-			sSql += "FROM Inscripcions I ";
-			sSql += "INNER JOIN Alumnes A ON A.Codi = I.Alumne ";
-			sSql += "INNER JOIN Tarifes T ON T.Codi = I.Tarifa ";
-			sSql += "INNER JOIN Descomptes D ON D.Codi = I.Descompte";
+			Statement stmt = conn.createStatement(); 
+//
+SELECT Codi, Nom AS Nivel FROM Nivells
+//
+			String sSql = "SELECT Codi, Nom AS Nivel FROM Nivells";
 			ResultSet res = stmt.executeQuery( sSql );
 
 			int iNumFil = 0;
@@ -55,8 +57,9 @@ INNER JOIN Descomptes D ON D.Codi = I.Descompte
 			conn.close();
 		}
 	} catch (Exception e) {
-		System.out.println("\n\n /api/inscrip.jsp -Error : "+e.getLocalizedMessage().toString());
+		System.out.println("\n\n /api/nivells.jsp -Error : "+e.getLocalizedMessage().toString());
 	}
+*/
 %>
 
 <%=jsonString%>

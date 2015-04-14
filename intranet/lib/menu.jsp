@@ -14,6 +14,11 @@
 					<li><button name="opc" value="13" >Alumnos</button></li>
 				</ul>
 			</li>
+			<li><span>Gestión</span>
+				<ul>
+					<li><button name="opc" value="21" >Niveles</button></li>
+				</ul>
+			</li>
 
 			<%	if (iNivell<=2) { %>
 			<li><span>Almenys nivell mig (2 i 1)</span>
