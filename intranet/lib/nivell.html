@@ -3,21 +3,22 @@
 	<h4 class="modal-title" id="myModalLabel">Detalle del nivel</h4>
 </div>
 
-<div class="modal-body">
+<div class="modal-body" ng-keydown="execDefault($event)">
 	<!-- {{codNiv}}: {{nomNiv}} -->
 	<form>
 		<div class="form-group">
-			<input type="text" id="nomID" class=" form-control" placeholder="Descripción" ng-model="nomNiv" ng-change="canvi()">
+			<input type="text" id="nomID" class="form-control" placeholder="Descripción" maxlength="30" ng-model="nomNiv" ng-change="canvi()">
 		</div>
 	</form>
 </div>
 
 <div class="modal-footer">
-	<div class="alert alert-danger" role="alert" ng-show="delPremut">
+	<div class="alert alert-danger" role="alert" ng-show="dangerMsg">
 		  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-		  Pulse otra vez para eliminar
+		  {{dangerMsg}}
 	</div>
 	<button class="btn btn-success" ng-show="!codNiv" ng-click="add()">Añadir</button>
 	<button class="btn btn-info" ng-show="codNiv" ng-click="mod()">Modificar</button>
 	<button class="btn" ng-class="delPremut ? 'btn-danger' : 'btn-warning'" ng-show="codNiv" ng-click="del()">Eliminar</button>
+	<button class="btn btn-warning" ng-click="cancel()">Salir</button>
 </div>

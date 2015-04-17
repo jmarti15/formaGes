@@ -260,7 +260,7 @@ if( sOpcions.length ==2 ) System.out.println( "Opc1: "+sOpcions[1] );
 		</div>
 	
 		<% if(bIncludeHtml) { %>
-			<jsp:include page="<%="lib/"+sInclude%>"/>		
+			<jsp:include page="<%="lib/"+sInclude%>"/>
 		<% } else if(bIncludeJsp) { %>
 			<jsp:include page="<%="lib/"+sInclude%>">
 				<jsp:param name="sessionid" value="<%=sSessID%>"/>

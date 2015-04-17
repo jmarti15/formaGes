@@ -13,3 +13,6 @@ hs_err_pid*
 
 # Fitxer MANIFEST.MF (a META-INF)
 MANIFEST.MF
+
+# Carpeta test
+test/

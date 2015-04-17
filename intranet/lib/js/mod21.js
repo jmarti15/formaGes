@@ -50,14 +50,14 @@ mod21.controller('nivellsCtrl', function($scope, $http, $modal) {
                 }
             }
         });
-/*
-        modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
+
+        modalInstance.result.then( function() {
+        	$scope.getNivells();
         }, function () {
-            $scope.selected = '';
+        	// cancel
         });
- */
 	}
+
 });
 
 mod21.controller('nivellDetallCtrl', function($scope, $http, $timeout, $modalInstance, nivLin) {
@@ -65,9 +65,13 @@ mod21.controller('nivellDetallCtrl', function($scope, $http, $timeout, $modalIns
 	$scope.codNiv = nivLin.Codi;
 	$scope.nomNiv = nivLin.Nivel;
 	$scope.delPremut = false;
+	$scope.dangerMsg = '';
 
+	// Posem el focus al final del camp amb id="nomID"
 	$timeout(function() {
 		$('#nomID').focus();
+		var strLength= $scope.nomNiv.length;
+		$('#nomID')[0].setSelectionRange(strLength, strLength);
       }, 400);		// Esperem a que es renderitzi la finestra modal
 
 	$scope.canvi = function() {
@@ -75,29 +79,75 @@ mod21.controller('nivellDetallCtrl', function($scope, $http, $timeout, $modalIns
 	}
 
 	$scope.add = function() {
-/*
-$http.post		// para insertar
-$http.put		// para actualizar
-$http.delete	// para eliminar
- */		
-		$http.post("api/nivells.jsp",[]).success( function(data) {
-			
+		$http({
+		    method: 'POST',
+		    url: "api/nivells.jsp",
+		    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+		    transformRequest: function(obj) {
+		        var str = [];
+		        for(var p in obj)
+		        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+		        return str.join("&");
+		    },
+		    data: {"nom":$scope.nomNiv}
+		}).success( function(data) {
+			if(data.res > 0) {
+				$modalInstance.close();
+			} else {
+				$scope.dangerMsg = "Error de Base de Datos...";
+			}
+		})
+		.error( function () {
+			$scope.dangerMsg = "Error de comunicaciones...";
+		});
+	};
 
-///
-	});
-///
-};
-	
 	$scope.mod = function() {
 		$scope.delPremut = false;
-///		
+
+		$http.put("api/nivells.jsp", null, {"params":{"codi": $scope.codNiv, "nom": $scope.nomNiv}} )
+		.success(function(data) {
+			if(data.res > 0) {
+				$modalInstance.close();
+			} else {
+				$scope.dangerMsg = "Error de Base de Datos...";
+			}
+		})
+		.error( function () {
+			$scope.dangerMsg = "Error de comunicaciones...";
+		});
 	}
-	
+
 	$scope.del = function() {
 		if( !$scope.delPremut ) {
 			$scope.delPremut = true;
+			$scope.dangerMsg = 'Pulse otra vez para eliminar';
 		} else {
-alert('Borrat!');
+			$http.delete("api/nivells.jsp", {"params":{"codi": $scope.codNiv}})
+			.success(function(data) {
+				if(data.res > 0) {
+					$modalInstance.close();
+				} else {
+					$scope.dangerMsg = "Error de Base de Datos...";
+				}
+			})
+			.error( function () {
+				$scope.dangerMsg = "Error de comunicaciones...";
+			});
 		}
 	}
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.execDefault = function ($event) {
+    	// Definim un botó per defecte
+    	var which = $event.which || $event.keyCode;
+       	if(which == 13) {
+        	if($scope.codNiv) $scope.mod();
+        								else $scope.add();
+       	}
+    }
+
 });

@@ -34,6 +34,16 @@
 				<button class="btn btn-success" ng-click="detall('')">Añadir</button>
 			 </div>
 		</form>
+		
+		<script>
+			// Per evitar un botó per defecte (ho faria Añadir)
+			document.onkeydown = function (ev) {
+				var ret = true;
+				ev.which = ev.which || ev.keyCode;
+		   		if(ev.which == 13) ret = false;
+		   		return ret;
+			}
+		</script>
 
 		<scrollable-table watch="data">
 			<table class="table table-striped table-bordered table-hover table-condensed">

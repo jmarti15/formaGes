@@ -10,6 +10,24 @@
 */%>
 <%@ include file="dbInit.jsp" %>
 <%!
+	public static int iExecQuery( String sSql ) {
+		Connection conn = null;
+		String jsonString = "";
+		int iNumRowsChanged = -1;
+		try {
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(dbUrl,dbUser,dbPass);
+			if (conn != null) {
+				Statement stmt = conn.createStatement();
+				iNumRowsChanged = stmt.executeUpdate( sSql );
+			}
+		} catch (Exception e) {
+			System.out.println("\n\n funcions.sExecQuery -Error : "+e.getLocalizedMessage().toString());
+		}
+System.out.println("functions.sExecQuery: "+jsonString);
+		return iNumRowsChanged;
+	}
+
 	public static String sSelect2Json( String sSql ) {
 		Connection conn = null;
 		String jsonString = "";
@@ -48,7 +66,7 @@
 				conn.close();
 			}
 		} catch (Exception e) {
-			System.out.println("\n\n /api/nivells.jsp -Error : "+e.getLocalizedMessage().toString());
+			System.out.println("\n\n funcions.sSelect2Json -Error : "+e.getLocalizedMessage().toString());
 		}
 		return jsonString;
 	}
