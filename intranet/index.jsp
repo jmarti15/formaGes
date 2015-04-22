@@ -210,7 +210,8 @@ if( sOpcions.length ==2 ) System.out.println( "Opc1: "+sOpcions[1] );
 
 	<link type="text/css" rel="stylesheet" charset="utf-8" href="css/estil.css">
 	<% if(bMostraMenu) { %><link type="text/css" rel="stylesheet" href="css/menu.css">	<% } %>
-	<script type="text/javascript" charset="utf-8" src="lib/sha2.js"></script>
+	<script type="text/javascript" charset="utf-8" src="lib/js/funcions.js"></script>	
+	<script type="text/javascript" charset="utf-8" src="lib/js/sha2.js"></script>
 	<script language="javascript" type="text/javascript">
 		<!-- hide this script tag's contents from old browsers
 	
@@ -258,13 +259,13 @@ if( sOpcions.length ==2 ) System.out.println( "Opc1: "+sOpcions[1] );
 			Habilítelo en el navegador y vuelva a cargar la página.
 		</div>
 		</div>
-	
+
 		<% if(bIncludeHtml) { %>
 			<jsp:include page="<%="lib/"+sInclude%>"/>
 		<% } else if(bIncludeJsp) { %>
 			<jsp:include page="<%="lib/"+sInclude%>">
 				<jsp:param name="sessionid" value="<%=sSessID%>"/>
-			</jsp:include>		
+			</jsp:include>
 		<% } %>
 	</div>
 
@@ -273,11 +274,10 @@ if( sOpcions.length ==2 ) System.out.println( "Opc1: "+sOpcions[1] );
 		// Activem web aquí usant js. Si js no està activat, no permetem login (no pot encriptar pasw)
 		document.getElementById("no_js1").style.display="none";
 	
-		if( document.getElementById("login_form").style.display == "block" ) {
+		if (document.getElementById("login_form") != null) {
 			document.getElementsByName("user")[0].focus();
 			document.getElementsByName("user")[0].select();
 		}
-	
 	  // done hiding from old browsers -->
 	</script>	
 </body>

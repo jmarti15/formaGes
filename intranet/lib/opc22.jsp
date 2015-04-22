@@ -1,26 +1,13 @@
-<!-- Formacions  -->
+<!-- Centres  -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-<script src="lib/js/mod21.js"></script>
+<script src="lib/js/mod22.js"></script>
 <script type="text/javascript" src="lib/js/angular-scrollable-table.js"></script>
 <link href="css/scrollable-table.css" rel="stylesheet" type="text/css">
  
-<!--	Usant API/formacions.jsp antiga (ens passava size de capçaleres i camps) 
- <div class="container" ng-app="mod11" ng-controller="clientsCtrl">
-	<table class="llista table table-striped table-hover table-condensed">
-		<thead><tr>
-			<th ng-repeat="cap in caps" style="width: {{cap.size}}%;">{{cap.val}}</th>
-		</tr></thead>
-		<tbody>
-			<tr ng-repeat="client in clientList">
-				<td ng-repeat= "camp in client" style="width: {{camp.size}}%;">{{camp.val}}</td>
-			</tr>
-		</tbody>
-	</table>	
--->
-<div ng-app="mod21" ng-init="rootWidth=600">
-	<div ng-controller="formacionsCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
+<div ng-app="mod22" ng-init="rootWidth=1000">
+	<div ng-controller="centresCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
 
 		<form class="grup form-inline">
 			<div class="form-group">
@@ -53,7 +40,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="dataLin in data | filter:search" row-id="{{dataLin.Codi}}" ng-class="{info: selected == dataLin.Codi}" ng-click="detall(dataLin)">
+					<tr ng-repeat="dataLin in data | filter:search" row-id="{{dataLin.Codi}}" ng-class="{info: selected == dataLin.Codi}" ng-click="detall(dataLin.Codi)">
 						<td ng-repeat="key in dataKeys"  ng-hide="key == 'Codi'">{{dataLin[key]}}</td>
 					</tr>
 				</tbody>

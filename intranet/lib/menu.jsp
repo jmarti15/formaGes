@@ -16,7 +16,8 @@
 			</li>
 			<li><span>Gestión</span>
 				<ul>
-					<li><button name="opc" value="21" >Niveles</button></li>
+					<li><button name="opc" value="21" >Formaciones</button></li>
+					<li><button name="opc" value="22" >Centros</button></li>
 				</ul>
 			</li>
 

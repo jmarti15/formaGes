@@ -1,0 +1,41 @@
+<div class="modal-header">
+	<button class="close" ng-click="cancel()">&times;</button>
+	<h2 class="modal-title" id="myModalLabel">Detalle de la formación</h2>
+</div>
+
+<div class="modal-body" ng-keydown="execDefault($event)">
+<!-- 	1 LIN		label a l'esq de l'input -->
+	<form class="form-horizontal">
+  		<div class="form-group">
+			<label class="col-sm-3 control-label">Descripción</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="nomID" maxlength="30" ng-model="nom" ng-change="canvi()">
+			</div>
+  		</div>
+  	</form>
+<!-- 	2 LIN
+	<form>
+  		<div class="form-group">
+			<label>Descripción</label>
+			<input type="text" class="form-control" id="nomID" maxlength="30" ng-model="nom" ng-change="canvi()">
+  		</div>
+  	</form> -->
+<!--	ORIG 	placeholder
+	<form>
+		<div class="form-group">
+			<input type="text" id="nomID" class="form-control" placeholder="Descripción" maxlength="30" ng-model="nom" ng-change="canvi()">
+		</div>
+	</form>
+-->
+</div>
+
+<div class="modal-footer">
+	<div class="alert alert-danger" role="alert" ng-show="dangerMsg">
+		  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		  {{dangerMsg}}
+	</div>
+	<button class="btn btn-success" ng-show="!codi" ng-click="add()">Añadir</button>
+	<button class="btn btn-info" ng-show="codi" ng-click="mod()">Modificar</button>
+	<button class="btn" ng-class="delPremut ? 'btn-danger' : 'btn-warning'" ng-show="codi" ng-click="del()">Eliminar</button>
+	<button class="btn btn-warning" ng-click="cancel()">Salir</button>
+</div>

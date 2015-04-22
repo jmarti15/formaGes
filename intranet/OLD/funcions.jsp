@@ -11,8 +11,28 @@
 */%>
 <%@ include file="dbInit.jsp" %>
 <%!
+	public static Iterator iJsonStr2Iter( String sData ){
+		JSONParser parser = new JSONParser();
+		ContainerFactory containerFactory = new ContainerFactory(){
+			public List creatArrayContainer() {
+				return new LinkedList();
+			}
+			public Map createObjectContainer() {
+				return new LinkedHashMap();
+			}
+		};
+		Map json = null;
+		try{
+			json = (Map)parser.parse( sData, containerFactory );
+		}
+		catch( ParseException pe ){
+			System.out.println( "iJsonStr2Iter error  [Position: " + pe.getPosition() + "]  " + pe );
+		}
+		Iterator iter = json.entrySet().iterator();
+		return iter;
+	}
+
 	public static String sUpdateQuery( String sTaula, String[] aKeys, String sData ){
-	// Retorna una query del tipus UPDATE
 	//UPDATE table_name   SET column1=value1,column2=value2,...   WHERE some_column=some_value;
 	
 		// aKeys
@@ -38,8 +58,47 @@
 		return sSql;
 	}
 
+	public static String sUpdateQuery2( String sTaula, String[] aKeys, String sData ){
+	//UPDATE table_name   SET column1=value1,column2=value2,...   WHERE some_column=some_value;
+
+		// aKeys
+		//		["Codi","Nom","Contacte","Telef1","Telef2","Email","Adre","CP","Prov","Pobl","Coment","NomAdmin","NIFAdmin"]
+		// sData		
+		//		{"Codi":"1","Centro":"Un punt de llum","Contacto":"Xus, Agnès i Mónica","Teléfono 1":"666 12 23 34","Teléfono 2":"777 123 456","eMail":"llum@gmail.com","Dirección":"llevant, 2","C.Postal":"08144","Provincia":"Barcelona","Población":"Mediona","Comentarios":"Espai de trobada de Mediona","Administrador":"Xus","NIF admin.":"39702777X"}
+
+		String sSql = "UPDATE " + sTaula + " SET ";
+		String sWhere = "";
+		JSONParser parser = new JSONParser();
+		ContainerFactory containerFactory = new ContainerFactory(){
+			public List creatArrayContainer() {
+				return new LinkedList();
+			}
+			public Map createObjectContainer() {
+				return new LinkedHashMap();
+			}
+		};
+		try{
+			Map json = (Map)parser.parse( sData, containerFactory );
+			Iterator iter = json.entrySet().iterator();
+			
+			Map.Entry entry = (Map.Entry)iter.next();
+			sWhere = " WHERE " + entry.getKey() + "=" + entry.getValue();
+			
+			int i = 1;
+			while(iter.hasNext()){
+				entry = (Map.Entry)iter.next();
+				sSql += aKeys[i++] + "=\"" + entry.getValue() + "\"";
+				if( iter.hasNext() ) sSql += ", ";
+			}
+		}
+		catch( ParseException pe ){
+			System.out.println( "[Position: " + pe.getPosition() + "]  " + pe );
+		}
+		sSql += sWhere;
+		return sSql;
+	}
+
 	public static String sInsertQuery( String sTaula, String[] aKeys, String sData ){
-	// Retorna una query del tipus INSERT 
 	//INSERT INTO table_name (column1,column2,column3,...) VALUES (value1,value2,value3,...);
 
 		// aKeys
@@ -65,8 +124,21 @@
 		return sSql;
 	}
 
-	public static Iterator iJsonStr2Iter( String sData ){
-	// Retorna un interador a partir d'un objecte json, per poder-lo recórrer (usat a sUpdateQuery i sInsertQuery) 
+	public static String sInsertQuery2( String sTaula, String[] aKeys, String sData ){
+	//INSERT INTO table_name (column1,column2,column3,...) VALUES (value1,value2,value3,...);
+
+		// aKeys
+		//		[Codi, Nom, Contacte, Telef1, Telef2, Email, Adre, CP, Prov, Pobl, Coment, NomAdmin, NIFAdmin]
+		//	sData
+		//  	{"Centro":"1","Contacto":"2","Teléfono 1":"3","Teléfono 2":"4","eMail":"5","Dirección":"6","C.Postal":"7","Provincia":"8","Población":"9","Comentarios":"0","Administrador":"00","NIF admin.":"000"}
+
+		String sSql = "INSERT INTO " + sTaula + " (";
+		for (int i = 1; i < aKeys.length; i++) {
+			sSql += aKeys[i];
+			if( i<aKeys.length-1 ) sSql += ", ";
+		}
+		sSql += ") VALUES (";
+
 		JSONParser parser = new JSONParser();
 		ContainerFactory containerFactory = new ContainerFactory(){
 			public List creatArrayContainer() {
@@ -76,21 +148,41 @@
 				return new LinkedHashMap();
 			}
 		};
-		Map json = null;
 		try{
-			json = (Map)parser.parse( sData, containerFactory );
+			Map json = (Map)parser.parse( sData, containerFactory );
+			Iterator iter = json.entrySet().iterator();
+			while(iter.hasNext()){
+				Map.Entry entry = (Map.Entry)iter.next();
+				sSql += "\"" + entry.getValue() + "\"";
+				if( iter.hasNext() ) sSql += ", ";
+			}
 		}
 		catch( ParseException pe ){
-			System.out.println( "iJsonStr2Iter error  [Position: " + pe.getPosition() + "]  " + pe );
+			System.out.println( "[Position: " + pe.getPosition() + "]  " + pe );
 		}
-		Iterator iter = json.entrySet().iterator();
-		return iter;
+
+		sSql += ")";
+		return sSql;
+	}
+
+	public static int iExecQuery( String sSql ) {
+		Connection conn = null;
+		String jsonString = "";
+		int iNumRowsChanged = -1;
+		try {
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(dbUrl,dbUser,dbPass);
+			if (conn != null) {
+				Statement stmt = conn.createStatement();
+				iNumRowsChanged = stmt.executeUpdate( sSql );
+			}
+		} catch (Exception e) {
+			System.out.println("\n\n funcions.sExecQuery -Error : "+e.getLocalizedMessage().toString());
+		}
+		return iNumRowsChanged;
 	}
 
 	public static String sKeys2Json( String sSql ){
-	// Retorna un array amb el nom dels camps d'una taula
-	//	Param:  sSql = "SELECT * FROM Centres LIMIT 1";
-	
 		Connection conn = null;
 		String jsonString = "";
 		try {
@@ -117,28 +209,8 @@
 		}
 		return jsonString;
 	}
-
-	public static int iExecQuery( String sSql ) {
-	// Executa una query INSERT, UPDATE o DELETE i retorna el número de files modificades 
-
-		Connection conn = null;
-		String jsonString = "";
-		int iNumRowsChanged = -1;
-		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(dbUrl,dbUser,dbPass);
-			if (conn != null) {
-				Statement stmt = conn.createStatement();
-				iNumRowsChanged = stmt.executeUpdate( sSql );
-			}
-		} catch (Exception e) {
-			System.out.println("\n\n funcions.sExecQuery -Error : "+e.getLocalizedMessage().toString());
-		}
-		return iNumRowsChanged;
-	}
 	
 	public static String sSelect2Json( String sSql, boolean bUnSolResul ) {
-	// Executa una query SELECT i retorna un json amb el resultat
 	//  unSolResul:	T -->  la consulta només retorna 1 fila (retornem objecte)
 	//							Ex:  SELECT * FROM Centres WHERE Codi=1  -->  {"Codi":"1", "Centro":"CentreA", "Contacto":"Xus", ... }
 	//						F -->  varies files (retornem array d'objectes)
@@ -158,20 +230,58 @@
 					res.beforeFirst(); // not rs.first() because the rs.next() below will move on, missing the first element
 				}
 	
+	//			Interface ResultSetMetaData
+	// 		http://docs.oracle.com/javase/6/docs/api/java/sql/ResultSetMetaData.html
 				ResultSetMetaData rsmd = res.getMetaData();
 				int iNumCol = rsmd.getColumnCount();
+	
+///	L    llista amb els noms de la BBDD  ---> keysDb
 
+// rsmd.getColumnName(i)
+		
+/*
+	JSONArray jsonArray = new JSONArray();
+	jsonArray.add("Harry");
+	jsonArray.add("Ron");
+	jsonString = jsonArray.toJSONString();		// ["Harry","Ron"]
+*/
+
+///
 				List  l = new LinkedList();
 				Map m[] = new Map[iNumFil];
+///				JSONArray jKeysDb = null;
 				int j = 0;
 				while (res.next()) {
+///   L    if j== 0		-->    for....      ---> keysDb
+/*
+					if( bUnSolResul && j==0 ){
+						jKeysDb = new JSONArray();
+						for (int i = 1; i <= iNumCol; i++) {
+							jKeysDb.add(rsmd.getColumnName(i));
+						}
+					}
+*/
+///
 					m[j] = new LinkedHashMap();
 					for (int i = 1; i <= iNumCol; i++) {
 						m[j].put( rsmd.getColumnLabel(i), res.getString(rsmd.getColumnLabel(i)) );
 					}
 					l.add(m[j++]);
 				}
+/// L
 				jsonString = bUnSolResul? JSONValue.toJSONString(m[0]) : JSONValue.toJSONString(l);
+/*
+				if( bUnSolResul ){
+/// 	L	retornar un array [keysDb, data]
+					JSONArray jRet = new JSONArray();
+					jRet.add(jKeysDb);
+					jRet.add(m[0]);
+					jsonString = jRet.toJSONString();
+				} else {
+					jsonString = JSONValue.toJSONString(l);
+				}
+*/
+///
 				res.close();
 				stmt.close();
 				conn.close();

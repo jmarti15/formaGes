@@ -1,0 +1,109 @@
+<div class="modal-header">
+	<button class="close" ng-click="cancel()">&times;</button>
+	<h2 class="modal-title" id="myModalLabel">Detalle del centro</h2>
+</div>
+
+<div class="modal-body" ng-keydown="execDefault($event)">
+	<form class="form-horizontal">
+  		<div class="form-group" ng-class="{'has-error': campErr[0]}">
+			<label class="col-sm-3 control-label">Descripción</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Centro" maxlength="30" ng-model="data.Centro" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[1]}">
+			<label class="col-sm-3 control-label">Contacto</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Contacto" maxlength="30" ng-model="data.Contacto" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[2]}">
+			<label class="col-sm-3 control-label">Teléfonos</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control form-lin2" id="Teléfono 1" maxlength="15" ng-model="data['Teléfono 1']" ng-change="canvi()">
+				<input type="text" class="form-control form-lin2" style="border-color: #CCC;" maxlength="15" ng-model="data['Teléfono 2']" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[3]}">
+			<label class="col-sm-3 control-label">eMail</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="eMail" maxlength="30" ng-model="data.eMail" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[4]}">
+			<label class="col-sm-3 control-label">Dirección</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Dirección" maxlength="30" ng-model="data['Dirección']" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[5]}">
+			<label class="col-sm-3 control-label">C.Postal</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="C.Postal" maxlength="5" ng-model="data['C.Postal']" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[6]}">
+			<label class="col-sm-3 control-label">Provincia</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Provincia" maxlength="30" ng-model="data.Provincia" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[7]}">
+			<label class="col-sm-3 control-label">Población</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Población" maxlength="30" ng-model="data['Población']" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group">
+			<label class="col-sm-3 control-label">Comentarios</label>
+			<div class="col-sm-9">
+				<textarea rows="3" class="form-control" ng-model="data.Comentarios" ng-change="canvi()"></textarea>
+			</div>
+  		</div>
+  		<div class="form-group">
+			<label class="col-sm-3 control-label">Administrador</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" maxlength="40" ng-model="data.Administrador" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group"  ng-class="{'has-error': nifErr}">
+			<label class="col-sm-3 control-label">NIF admin.</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" maxlength="15" ng-model="data['NIF admin.']" ng-change="canvi('nif')">
+			</div>
+  		</div>
+  	</form>
+<!--
+	<form>
+		<div class="form-group">
+			<input type="text" id="nomID" class="form-control" placeholder="Descripción" maxlength="30" ng-model="data.Centro" ng-change="canvi()">
+			<input type="text" class="form-control" placeholder="Contacto" maxlength="30" ng-model="data.Contacto" ng-change="canvi()">
+			<input type="text" class="form-control" placeholder="Teléfono 1" maxlength="15" ng-model="data['Teléfono 1']" ng-change="canvi()">
+			<input type="text" class="form-control" placeholder="Teléfono 2" maxlength="15" ng-model="data['Teléfono 2']" ng-change="canvi()">
+			<input type="text" class="form-control" placeholder="eMail" maxlength="30" ng-model="data.eMail" ng-change="canvi()">
+			<input type="text" class="form-control" placeholder="Dirección" maxlength="30" ng-model="data['Dirección']" ng-change="canvi()">
+			<input type="text" class="form-control" placeholder="C.Postal" maxlength="5" ng-model="data['C.Postal']" ng-change="canvi()">
+			<input type="text" class="form-control" placeholder="Provincia" maxlength="30" ng-model="data.Provincia" ng-change="canvi()">
+			<input type="text" class="form-control" placeholder="Población" maxlength="30" ng-model="data['Población']" ng-change="canvi()">
+			
+			<textarea rows="3" class="form-control" placeholder="Comentarios" ng-model="data.Comentarios" ng-change="canvi()"></textarea>
+			<input type="text" class="form-control" placeholder="Administrador" maxlength="40" ng-model="data.Administrador" ng-change="canvi()">
+			<input type="text" class="form-control" placeholder="NIF admin." maxlength="15" ng-model="data['NIF admin.']" ng-change="canvi()">
+		</div>
+	</form>
+-->
+<p>{{camps}}</p>
+<p>{{msgErr}}</p>
+
+</div>
+
+<div class="modal-footer">
+	<div class="alert alert-danger" role="alert" ng-show="dangerMsg">
+		  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		  {{dangerMsg}}
+	</div>
+	<button class="btn btn-success" ng-show="!codi" ng-click="add()">Añadir</button>
+	<button class="btn btn-info" ng-show="codi" ng-click="mod()">Modificar</button>
+	<button class="btn" ng-class="delPremut ? 'btn-danger' : 'btn-warning'" ng-show="codi" ng-click="del()">Eliminar</button>
+	<button class="btn btn-warning" ng-click="cancel()">Salir</button>
+</div>
