@@ -11,15 +11,12 @@
 */%>
 <%@ include file="dbInit.jsp" %>
 <%!
-	public static String sUpdateQuery( String sTaula, String[] aKeys, String sData ){
+	public static String sUpdateQuery( String sTaula, String sData ){
 	// Retorna una query del tipus UPDATE
 	//UPDATE table_name   SET column1=value1,column2=value2,...   WHERE some_column=some_value;
 	
-		// aKeys
-		//		["Codi","Nom","Contacte","Telef1","Telef2","Email","Adre","CP","Prov","Pobl","Coment","NomAdmin","NIFAdmin"]
 		// sData		
-		//		{"Codi":"1","Centro":"Un punt de llum","Contacto":"Xus, Agnès i Mónica","Teléfono 1":"666 12 23 34","Teléfono 2":"777 123 456","eMail":"llum@gmail.com","Dirección":"llevant, 2","C.Postal":"08144","Provincia":"Barcelona","Población":"Mediona","Comentarios":"Espai de trobada de Mediona","Administrador":"Xus","NIF admin.":"39702777X"}
-	
+		//		{"Codi":"3","Nom":"1","Contacte":"2","Telef1":"3","Telef2":"4","Email":"5","Adre":"6","CP":"7","Prov":"8","Pobl":"9","Coment":"0","NomAdmin":"0","NIFAdmin":"39702772B"}
 		String sSql = "UPDATE " + sTaula + " SET ";
 		String sWhere = "";
 		
@@ -27,10 +24,9 @@
 		Map.Entry entry = (Map.Entry)iter.next();
 		sWhere = " WHERE " + entry.getKey() + "=" + entry.getValue();
 		
-		int i = 1;
 		while( iter.hasNext() ){
 			entry = (Map.Entry)iter.next();
-			sSql += aKeys[i++] + "=\"" + entry.getValue() + "\"";
+			sSql += entry.getKey() + "=\"" + entry.getValue() + "\"";
 			if( iter.hasNext() ) sSql += ", ";
 		}
 		
@@ -38,33 +34,36 @@
 		return sSql;
 	}
 
-	public static String sInsertQuery( String sTaula, String[] aKeys, String sData ){
+	
+	public static String sInsertQuery( String sTaula, String sData ){
 	// Retorna una query del tipus INSERT 
 	//INSERT INTO table_name (column1,column2,column3,...) VALUES (value1,value2,value3,...);
 
-		// aKeys
-		//		[Codi, Nom, Contacte, Telef1, Telef2, Email, Adre, CP, Prov, Pobl, Coment, NomAdmin, NIFAdmin]
+		//++++ aKeys
+		//++++		[Codi, Nom, Contacte, Telef1, Telef2, Email, Adre, CP, Prov, Pobl, Coment, NomAdmin, NIFAdmin]
 		//	sData
-		//  	{"Centro":"1","Contacto":"2","Teléfono 1":"3","Teléfono 2":"4","eMail":"5","Dirección":"6","C.Postal":"7","Provincia":"8","Población":"9","Comentarios":"0","Administrador":"00","NIF admin.":"000"}
+		//++++  	{"Centro":"1","Contacto":"2","Teléfono 1":"3","Teléfono 2":"4","eMail":"5","Dirección":"6","C.Postal":"7","Provincia":"8","Población":"9","Comentarios":"0","Administrador":"00","NIF admin.":"000"}
+		//		{"Nom":"Un punt de llum","Contacte":"Xus, Agnès i Mónica","Telef1":"666 12 23 34","Telef2":"777 123 456","Email":"llum@gmail.com","Adre":"Llevant, 2","CP":"08144","Prov":"Barcelona","Pobl":"Mediona","Coment":"Espai de trobada de Mediona","NomAdmin":"Xus","NIFAdmin":"39702772B"}
 
 		String sSql = "INSERT INTO " + sTaula + " (";
-		for (int i = 1; i < aKeys.length; i++) {
-			sSql += aKeys[i];
-			if( i<aKeys.length-1 ) sSql += ", ";
-		}
-		sSql += ") VALUES (";
+		String sValues = ") VALUES (";
 
 		Iterator iter = iJsonStr2Iter( sData );
 		while(iter.hasNext()){
 			Map.Entry entry = (Map.Entry)iter.next();
-			sSql += "\"" + entry.getValue() + "\"";
-			if( iter.hasNext() ) sSql += ", ";
+			sSql += entry.getKey();
+			sValues += "\"" + entry.getValue() + "\"";
+			if( iter.hasNext() ){
+				sSql += ", ";
+				sValues += ", ";
+			}
 		}
 
-		sSql += ")";
+		sSql += sValues + ")";
 		return sSql;
 	}
 
+	
 	public static Iterator iJsonStr2Iter( String sData ){
 	// Retorna un interador a partir d'un objecte json, per poder-lo recórrer (usat a sUpdateQuery i sInsertQuery) 
 		JSONParser parser = new JSONParser();
@@ -87,6 +86,7 @@
 		return iter;
 	}
 
+	
 	public static String sKeys2Json( String sSql ){
 	// Retorna un array amb el nom dels camps d'una taula
 	//	Param:  sSql = "SELECT * FROM Centres LIMIT 1";
@@ -113,11 +113,12 @@
 				conn.close();
 			}
 		} catch (Exception e) {
-			System.out.println("\n\n funcions.sSelect2Json -Error : "+e.getLocalizedMessage().toString());
+			System.out.println("\n\n funcions.sKeys2Json -Error : "+e.getLocalizedMessage().toString());
 		}
 		return jsonString;
 	}
 
+	
 	public static int iExecQuery( String sSql ) {
 	// Executa una query INSERT, UPDATE o DELETE i retorna el número de files modificades 
 
@@ -136,6 +137,7 @@
 		}
 		return iNumRowsChanged;
 	}
+	
 	
 	public static String sSelect2Json( String sSql, boolean bUnSolResul ) {
 	// Executa una query SELECT i retorna un json amb el resultat
@@ -182,6 +184,7 @@
 		return jsonString;
 	}
 
+	
 	public static int iNivellUsuari( String sUser ) {
 		int iNivell = -1;
 		Connection conn = null;
@@ -204,6 +207,7 @@
 		return iNivell;
 	}
 
+	
 	public static boolean acces(String sUser, String sPass, String sLlavor, Contenidor Nivell) {
 /*
 out.println( "User: "+request.getParameter("user")+"<br/>" );
@@ -216,7 +220,7 @@ out.println( "PswEnc: "+request.getParameter("passH")+"<br/>" );
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection(dbUrl,dbUser,dbPass);
 			if (conn != null) {
-//System.out.println("Conexión a base de datos " + url + " ... Ok");				
+//System.out.println("Conexión a base de datos " + url + " ... Ok");
 				Statement stmt = conn.createStatement();
 				ResultSet res = stmt.executeQuery( "SELECT psw, nivell FROM Usuaris where nom='"+sUser+"'" );
 				if( res.next() ) {
@@ -232,7 +236,7 @@ out.println( "PswEnc: "+request.getParameter("passH")+"<br/>" );
 /*
 				if(bAcces) {
 System.out.println("Accés correcte: "+sUser);
-				} 
+				}
 				else
 System.out.println("Accés INcorrecte");
 //					out.println("User/Psw incorrecte<br/>");
@@ -248,6 +252,7 @@ System.out.println("Accés INcorrecte");
 		return bAcces;
 	}
 
+	
 	public static Cookie borraCookie( ) {
 		// Borrem cookie
 		Cookie unCookie = new Cookie("user", null);
@@ -256,6 +261,7 @@ System.out.println("Accés INcorrecte");
 		return unCookie;
 	}
 
+	
 	public static String sha256(String sPsw) {
 		try{
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -281,6 +287,7 @@ System.out.println("Accés INcorrecte");
 	  }
 	}
 
+	
 	public static String getClientIpAddr(HttpServletRequest request) {
 	  String ip = request.getHeader("X-Forwarded-For");
 	  if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
@@ -300,6 +307,7 @@ System.out.println("Accés INcorrecte");
 	  }
 	  return ip;
   }
+	
 	
 	class Contenidor{
 		private int i;

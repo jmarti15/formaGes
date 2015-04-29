@@ -21,6 +21,7 @@
 -->
 <div ng-app="mod21" ng-init="rootWidth=600">
 	<div ng-controller="formacionsCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
+		<h2>Gestión de Formaciones</h2>
 
 		<form class="grup form-inline">
 			<div class="form-group">

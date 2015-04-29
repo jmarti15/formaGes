@@ -8,6 +8,7 @@
  
 <div ng-app="mod22" ng-init="rootWidth=1000">
 	<div ng-controller="centresCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
+		<h2>Gestión de Centros</h2>
 
 		<form class="grup form-inline">
 			<div class="form-group">

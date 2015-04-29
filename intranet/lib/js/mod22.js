@@ -29,10 +29,6 @@ mod22.controller('centresCtrl', function($scope, $http, $modal, func) {
 	};
 	$scope.getCentres();
 
-	$http.get("api/centres.jsp?codi=keys").success( function(data) {
-	    $scope.keysDb = data;
-	});
-
 	$scope.detall = function(codi) {
 		if(codi) {
 			$http.get("api/centres.jsp?codi="+codi).success( function(data) {
@@ -49,9 +45,6 @@ mod22.controller('centresCtrl', function($scope, $http, $modal, func) {
 			controller: 'centreDetallCtrl',
 			size: '',         // large: 'lg'    normal: ''     small: 'sm'
 			resolve: {
-			    keysDb: function () {
-			        return $scope.keysDb;
-			    },
 			    dataDet: function () {
 			        return data;
 			    }
@@ -66,18 +59,17 @@ mod22.controller('centresCtrl', function($scope, $http, $modal, func) {
 
 });
 
-mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalInstance, func, keysDb, dataDet) {
+
+mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalInstance, func, dataDet) {
 // keysDb:		[Codi, Nom, Contacte, Telef1, Telef2, Email, Adre, CP, Prov, Pobl, Coment, NomAdmin, NIFAdmin]
-// dataDet:	mod/del			{"Codi":"1", "Centro":"Un punt de llum","Contacto":"Xus, Agnès i Mónica","Teléfono 1":"666 12 23 34",
-//													"Teléfono 2":"777 123 456", "eMail":"llum@gmail.com","Dirección":"llevant, 2","C.Postal":"08144",
-//													"Provincia":"Barcelona","Población":"Mediona", "Comentarios":"Espai de trobada de Mediona",
-//													"Administrador":"Xus","NIF admin.":"39702777X"}
+// dataDet:	mod/del			{"Codi":"1","Nom":"Un punt de llum","Contacte":"Xus, Agnès i Mónica","Telef1":"666 12 23 34","Telef2":"777 123 456",
+//													"Email":"llum@gmail.com","Adre":"Llevant, 2","CP":"08144","Prov":"Barcelona","Pobl":"Mediona",
+//													"Coment":"Espai de trobada de Mediona","NomAdmin":"Xus","NIFAdmin":"39702772B"}
 //						add					null
-	$scope.keysDb = keysDb;
 	$scope.data = dataDet;
 	if(dataDet){
 		$scope.codi = dataDet.Codi;
-		$scope.nom = dataDet.Centro;
+		$scope.nom = dataDet.Nom;
 	} else {
 		$scope.codi = '';
 		$scope.nom = '';
@@ -85,43 +77,126 @@ mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalIns
 	
 	$scope.delPremut = false;
 	$scope.dangerMsg = '';
-	$scope.nifErr = $scope.data && !validaNifNie( $scope.data['NIF admin.'] );
+
+	$scope.deplegaPobl = false;
+	$scope.carregaCodPobl = function(param){
+		$http.get("api/poblacions.jsp?"+param).success( function(data) {
+			$scope.deplegaPobl = (data.length > 1);
+			if( data.length===0 ){		// cp inexistent
+				$scope.cpErr = true;
+			} else if( data.length===1 ){
+				$scope.data.CodPobl = data[0].Codi;
+				$scope.pobl = data[0].Pobl;
+				$scope.prov = data[0].Prov;
+				if( !$scope.codPos ){	// Acabem d'entrar al centre
+					$scope.codPos = data[0].CodPos;													// Omplim el CP
+					$scope.carregaCodPobl( "codpos="+data[0].CodPos );	// Carreguem poblacions pel CP
+					$scope.poblacio = $scope.data.CodPobl;									// Seleccionem al desplegable
+				}
+			} else {
+				$scope.poblacions = data;
+			}
+		});
+	};
+	if( $scope.data && $scope.data.CodPobl ) $scope.carregaCodPobl( "codpobl="+$scope.data.CodPobl );
+	
 	
 	// Posem el focus al final del camp
-	$timeout(function() {
-		$('#Centro').focus();
+	$timeout( function() {
+		$('#Nom').focus();
 		var strLength= $scope.nom.length;
-		$('#Centro')[0].setSelectionRange(strLength, strLength);
+		$('#Nom')[0].setSelectionRange(strLength, strLength);
       }, 400);		// Esperem a que es renderitzi la finestra modal
 
+	
 	$scope.canvi = function(opc) {
 		$scope.delPremut = false;
 		$scope.dangerMsg = '';
+		$scope.campErr=[];	// netegem els errors de camps obligatoris
 		
-		if( opc=='nif' ){
-			$scope.nifErr = !validaNifNie( $scope.data['NIF admin.'] );
+		if( opc=='email' ){
+			if( $scope.campErr ) $scope.campErr[3] = false;
+			$scope.emailErr =  !validateEmail( $scope.data.Email );
+			
+		} else if( opc=='nif' ){
+			$scope.nifErr = !validaNifNie( $scope.data.NIFAdmin );
+			
+		} else if( opc=='cp' ){
+			if( $scope.campErr ) $scope.campErr[5] = false;
+			var codPos = $scope.codPos;
+			$scope.cpErr = !	validarCodPos( codPos );	// cp incorrecte
+			$scope.deplegaPobl = false;
+			$scope.pobl = '';
+			$scope.prov = '';
+			if( !$scope.data ) $scope.data = {};		// (al Añadir)  No han omplert cap camp
+			$scope.data.CodPobl = '';
+			if( codPos && !$scope.cpErr ){
+				$scope.carregaCodPobl( "codpos="+codPos );
+			}
+
+		} else if( opc=='pobl' ){
+			if( $scope.campErr ) $scope.campErr[5] = false;
+//$scope.CodPobl		=34987
+//$scope.poblacions = [{"Codi":"34987","Pobl":"MASO, LA","Prov":"Tarragona"},{"Codi":"34997","Pobl":"MILA, EL","Prov":"Tarragona"}]
+			var idx = document.getElementById('Poble').selectedIndex;
+			if( idx===0 ){
+				$scope.data.CodPobl = null;		// al onKeyUp encara no s'ha actualitzat el valor de data.CodPobl
+				$scope.pobl = '';
+				$scope.prov = '';
+			} else {
+				$scope.data.CodPobl = $scope.poblacions[idx-1].Codi;		// al onKeyUp encara no s'ha actualitzat el valor de data.CodPobl
+				for( var i in $scope.poblacions ){
+					if( $scope.poblacions[i].Codi==$scope.data.CodPobl ){
+						$scope.pobl = $scope.poblacions[i].Pobl;
+						$scope.prov = $scope.poblacions[i].Prov;
+						break;
+					}
+				}
+			}
 		}
+
 	};
 
+	
 	$scope.validacions = function() {
-		if( $scope.nifErr ) {
-			$scope.dangerMsg = "NIF o NIE incorrecto...";
+		$scope.campErr = [];		// posarem a true pq s'apliqui la classe has-error (marca el camp en vermell) 
+		
+		if( $scope.emailErr ) {
+			$scope.dangerMsg = "eMail incorrecto...";
+			$('#Email').focus();
 			return false;
 		}
 
-		var campsOblig =  ["Centro","Contacto","Teléfono 1","eMail","Dirección","C.Postal","Provincia","Población"];
+		if( $scope.cpErr ) {
+			$scope.dangerMsg = "Código Postal incorrecto...";
+			$('#CodPos').focus();
+			return false;
+		}
+		
+		if( $scope.nifErr ) {
+			$scope.dangerMsg = "NIF o NIE incorrecto...";
+			$('#NIFAdmin').focus();
+			return false;
+		}
+
+		var campsOblig = ["Nom","Contacte","Telef1","Email","Adre","CodPobl"];
 		var campDescri = function(camp){
-			if(camp=="Centro"){ return "Descripción"; }
-			else { return camp; }
+/*keysDB -Codi:			
+			[Nom, Contacte, Telef1, Telef2, Email, Adre, CodPos, Prov, Pobl, Coment, NomAdmin, NIFAdmin]
+		alias:
+			["Centro", "Contacto", "Teléfono 1", "Teléfono 2", "eMail", "Dirección", "C.Postal", "Provincia", "Población", "Comentarios", "Administrador", "NIF admin."]
+*/
+			var alias =	{"Nom":"Nombre", "Contacte":"Contacto", "Telef1":"Teléfono 1", "Telef2":"Teléfono 2", "Email":"eMail", "Adre":"Dirección", "CP":"C.Postal", 
+			 "Pobl":"Población", "Coment":"Comentarios", "NomAdmin":"Administrador", "NIFAdmin":"NIF admin.", "CodPobl":"C.Postal / Población"};
+			return alias[camp];
 		};
 		$scope.msgErr = '';
-		$scope.campErr = [];
 		try {
-			if( !$scope.data ){		// (a Añadir)  No han omplert cap camp 
-														// (Els elements de $scope.data es defineixen quan són informats, a l'inici $scope.data val null)   
+			if( !$scope.data ){		// (al Añadir)  No han omplert cap camp
+														// (Els elements de $scope.data es defineixen quan són informats, a l'inici $scope.data val null)
 				$scope.dangerMsg = "Debe rellenar el campo: "+campDescri( campsOblig[0] );
 				$scope.campErr[0] = true;
-$('#'+campsOblig[0]).focus();
+				$('#'+campsOblig[0]).focus();
 				return false;
 			} else {
 				for( var i in campsOblig ){
@@ -130,8 +205,7 @@ $('#'+campsOblig[0]).focus();
 					if( !valor ){
 						$scope.dangerMsg = "Debe rellenar el campo: "+campDescri( camp );
 						$scope.campErr[i] = true;
-//$('#'+camp).focus();
-$("[id='"+camp+"']").focus();
+						$('#'+camp).focus();
 						return false;
 					}
 				}
@@ -144,10 +218,11 @@ $("[id='"+camp+"']").focus();
 		return true;	//ok
 	};
 	
+	
 	$scope.add = function() {
 		if( !$scope.validacions() ) return;
 		
-		$http.post("api/centres.jsp", null, {"params":{"keys": $scope.keysDb, "data": $scope.data}} )
+		$http.post("api/centres.jsp", null, {"params":{"data": $scope.data}} )
 		.success( function(data) {
 			if(data.res > 0) {
 				$modalInstance.close();
@@ -160,11 +235,12 @@ $("[id='"+camp+"']").focus();
 		});
 	};
 
+	
 	$scope.mod = function() {
 		$scope.delPremut = false;
 		if( !$scope.validacions() ) return;
 
-		$http.put("api/centres.jsp", null, {"params":{"keys": $scope.keysDb, "data": $scope.data}} )
+		$http.put("api/centres.jsp", null, {"params":{"data": $scope.data}} )
 		.success(function(data) {
 			if(data.res > 0) {
 				$modalInstance.close();
@@ -177,8 +253,9 @@ $("[id='"+camp+"']").focus();
 		});
 	};
 
+	
 	$scope.del = function() {
-// validar que no estigui en us
+// L   validar que no estigui en us
 //		if( !$scope.validaDel() ) return;
 		
 		if( !$scope.delPremut ) {
@@ -199,9 +276,11 @@ $("[id='"+camp+"']").focus();
 		}
 	};
 
+	
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
+    
 
     $scope.execDefault = function ($event) {
     	// Definim un botó per defecte

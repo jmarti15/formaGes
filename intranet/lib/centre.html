@@ -6,70 +6,70 @@
 <div class="modal-body" ng-keydown="execDefault($event)">
 	<form class="form-horizontal">
   		<div class="form-group" ng-class="{'has-error': campErr[0]}">
-			<label class="col-sm-3 control-label">Descripción</label>
+			<label class="col-sm-3 control-label">Nombre</label>
 			<div class="col-sm-9">
-				<input type="text" class="form-control" id="Centro" maxlength="30" ng-model="data.Centro" ng-change="canvi()">
+				<input type="text" class="form-control" id="Nom" maxlength="30" ng-model="data.Nom" ng-change="canvi()">
 			</div>
   		</div>
   		<div class="form-group" ng-class="{'has-error': campErr[1]}">
 			<label class="col-sm-3 control-label">Contacto</label>
 			<div class="col-sm-9">
-				<input type="text" class="form-control" id="Contacto" maxlength="30" ng-model="data.Contacto" ng-change="canvi()">
+				<input type="text" class="form-control" id="Contacte" maxlength="30" ng-model="data.Contacte" ng-change="canvi()">
 			</div>
   		</div>
   		<div class="form-group" ng-class="{'has-error': campErr[2]}">
 			<label class="col-sm-3 control-label">Teléfonos</label>
 			<div class="col-sm-9">
-				<input type="text" class="form-control form-lin2" id="Teléfono 1" maxlength="15" ng-model="data['Teléfono 1']" ng-change="canvi()">
-				<input type="text" class="form-control form-lin2" style="border-color: #CCC;" maxlength="15" ng-model="data['Teléfono 2']" ng-change="canvi()">
+				<input type="text" class="form-control form-lin2" id="Telef1" maxlength="15" ng-model="data.Telef1" ng-change="canvi()">
+				<input type="text" class="form-control form-lin2" style="border-color: #CCC;" maxlength="15" ng-model="data.Telef2" ng-change="canvi()">
 			</div>
   		</div>
-  		<div class="form-group" ng-class="{'has-error': campErr[3]}">
+  		<div class="form-group" ng-class="{'has-error': emailErr || campErr[3]}">
 			<label class="col-sm-3 control-label">eMail</label>
 			<div class="col-sm-9">
-				<input type="text" class="form-control" id="eMail" maxlength="30" ng-model="data.eMail" ng-change="canvi()">
+				<input type="text" class="form-control" id="Email" maxlength="30" ng-model="data.Email" ng-change="canvi('email')">
 			</div>
   		</div>
   		<div class="form-group" ng-class="{'has-error': campErr[4]}">
 			<label class="col-sm-3 control-label">Dirección</label>
 			<div class="col-sm-9">
-				<input type="text" class="form-control" id="Dirección" maxlength="30" ng-model="data['Dirección']" ng-change="canvi()">
+				<input type="text" class="form-control" id="Adre" maxlength="30" ng-model="data.Adre" ng-change="canvi()">
 			</div>
   		</div>
   		<div class="form-group" ng-class="{'has-error': campErr[5]}">
-			<label class="col-sm-3 control-label">C.Postal</label>
+  			<label class="col-sm-3 control-label">C.Postal</label>
 			<div class="col-sm-9">
-				<input type="text" class="form-control" id="C.Postal" maxlength="5" ng-model="data['C.Postal']" ng-change="canvi()">
+				<input type="text" class="form-control" id="CodPobl" maxlength="5" ng-model="codPos" ng-change="canvi('cp')">
 			</div>
-  		</div>
-  		<div class="form-group" ng-class="{'has-error': campErr[6]}">
-			<label class="col-sm-3 control-label">Provincia</label>
-			<div class="col-sm-9">
-				<input type="text" class="form-control" id="Provincia" maxlength="30" ng-model="data.Provincia" ng-change="canvi()">
-			</div>
-  		</div>
-  		<div class="form-group" ng-class="{'has-error': campErr[7]}">
 			<label class="col-sm-3 control-label">Población</label>
 			<div class="col-sm-9">
-				<input type="text" class="form-control" id="Población" maxlength="30" ng-model="data['Población']" ng-change="canvi()">
+      			<p ng-hide="deplegaPobl" class="form-control-static">{{pobl}}</p>
+				<select id="Poble" ng-show="deplegaPobl" ng-model="data.CodPobl" ng-options="poblacio.Codi as poblacio.Pobl for poblacio in poblacions" ng-change="canvi('pobl')" ng-keyup="canvi('pobl')">
+					<option value=""></option>
+				</select>
 			</div>
-  		</div>
+			<label ng-show="prov" class="col-sm-3 control-label">Provincia</label>
+			<div class="col-sm-9">
+      			<p class="form-control-static">{{prov}}</p>
+      		</div>
+      	</div>
   		<div class="form-group">
 			<label class="col-sm-3 control-label">Comentarios</label>
 			<div class="col-sm-9">
-				<textarea rows="3" class="form-control" ng-model="data.Comentarios" ng-change="canvi()"></textarea>
+				<textarea rows="2" class="form-control" ng-model="data.Coment" ng-change="canvi()"></textarea>
 			</div>
   		</div>
+  		<span id="helpBlock" class="help-block">Información necesaria para la Fundación Tripartita:</span>
   		<div class="form-group">
 			<label class="col-sm-3 control-label">Administrador</label>
 			<div class="col-sm-9">
-				<input type="text" class="form-control" maxlength="40" ng-model="data.Administrador" ng-change="canvi()">
+				<input type="text" class="form-control" maxlength="40" ng-model="data.NomAdmin" ng-change="canvi()">
 			</div>
   		</div>
   		<div class="form-group"  ng-class="{'has-error': nifErr}">
 			<label class="col-sm-3 control-label">NIF admin.</label>
 			<div class="col-sm-9">
-				<input type="text" class="form-control" maxlength="15" ng-model="data['NIF admin.']" ng-change="canvi('nif')">
+				<input type="text" class="form-control" id="NIFAdmin" maxlength="15" ng-model="data.NIFAdmin" ng-change="canvi('nif')">
 			</div>
   		</div>
   	</form>

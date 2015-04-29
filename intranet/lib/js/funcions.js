@@ -1,8 +1,29 @@
 'use strict';
 
 //****************************************************************************
-//http://pelablog.onicesistemas.es/validar-nif-nie-con-javascript/
+//	https://sites.google.com/site/dwebtodojs/aprendemos-con-ejemplos/6-ejemplo-javascript-formularios-validacion-longitud-email-etc-expresiones-regulares
 //****************************************************************************
+
+function validarCodPos(cp) {
+	if( !cp ) return true;
+	var re = /(^([0-9]{5,5})|^)$/;
+    return re.test(cp);
+}
+
+//****************************************************************************
+//	http://stackoverflow.com/questions/46155/validate-email-address-in-javascript
+//****************************************************************************
+
+function validateEmail(email) {
+	if( !email ) return true;
+    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    return re.test(email);
+}
+
+//****************************************************************************
+//	http://pelablog.onicesistemas.es/validar-nif-nie-con-javascript/
+//****************************************************************************
+
 function validaNifNie(value) {
 	if( !value ) return true;
 	if (validaNif(value) === false) {
