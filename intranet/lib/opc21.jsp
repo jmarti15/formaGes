@@ -20,7 +20,7 @@
 	</table>	
 -->
 <div ng-app="mod21" ng-init="rootWidth=600">
-	<div ng-controller="formacionsCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
+	<div ng-controller="opcCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
 		<h2>Gestión de Formaciones</h2>
 
 		<form class="grup form-inline">
@@ -61,6 +61,7 @@
 			</table>
 		</scrollable-table>
 			
-		<div class="grup pull-right">{{(data | filter:search).length}} filas<span ng-show="search"> (total: {{data.length}})</span></div>
+		<div class="grup pull-right">{{(data | filter:search).length}} filas<span ng-show="search"> (Total: {{data.length}})</span></div>
+   		<button ng-click="getData()"><span class="glyphicon glyphicon-refresh" aria-hidden="true" ></span> Actualizar</button>
    	</div>
 </div>

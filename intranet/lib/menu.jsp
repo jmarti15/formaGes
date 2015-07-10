@@ -18,6 +18,10 @@
 				<ul>
 					<li><button name="opc" value="21" >Formaciones</button></li>
 					<li><button name="opc" value="22" >Centros</button></li>
+					<li><button name="opc" value="23" >Métodos de captación</button></li>
+					<li><button name="opc" value="24" >Cursos</button></li>
+					<li><button name="opc" value="25" >Tarifas</button></li>
+					<li><button name="opc" value="26" >Descuentos</button></li>
 				</ul>
 			</li>
 

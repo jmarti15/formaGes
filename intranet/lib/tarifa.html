@@ -1,0 +1,50 @@
+<div class="modal-header">
+	<button class="close" ng-click="cancel()">&times;</button>
+	<h2 class="modal-title" id="myModalLabel">Detalle de la Tarifa</h2>
+</div>
+
+<div class="modal-body" ng-keydown="execDefault($event)">
+	<form class="form-horizontal">
+  		<div class="form-group" ng-class="{'has-error': campErr[0]}">
+			<label class="col-sm-3 control-label">Nombre</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Nom" maxlength="30" ng-model="data.Nom" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': dataErr || campErr[1]}">
+  			<label class="col-sm-3 control-label">F.Inicial</label>
+			<div class="col-sm-9">
+				<p class="input-group">
+					<input type="text" class="form-control" id="DInicial" date-fix datepicker-popup="dd/MM/yy" ng-model="data.DInicial" is-open="opened" datepicker-options="dateOptions" current-text="Hoy" clear-text="Borrar" close-text="Salir"  ng-change="canvi('data')" ng-keyup="dataKey($event)">
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="dataOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+					</span>
+				</p>
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[2]}">
+			<label class="col-sm-3 control-label">Importe</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Import" maxlength="5" ng-model="data.Import" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[3]}">
+			<label class="col-sm-3 control-label">Núm.Líneas</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="NumLinies" maxlength="1" ng-model="data.NumLinies" ng-change="canvi()">
+			</div>
+  		</div>
+  	</form>
+	<p>{{msgErr}}</p>
+</div>
+
+<div class="modal-footer">
+	<div class="alert alert-danger" role="alert" ng-show="dangerMsg">
+		  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		  {{dangerMsg}}
+	</div>
+	<button class="btn btn-success" ng-show="!codi" ng-click="add()">Añadir</button>
+	<button class="btn btn-info" ng-show="codi" ng-click="mod()">Modificar</button>
+	<button class="btn" ng-class="delPremut ? 'btn-danger' : 'btn-warning'" ng-show="codi" ng-click="del()">Eliminar</button>
+	<button class="btn btn-warning" ng-click="cancel()">Salir</button>
+</div>

@@ -245,7 +245,7 @@
           };
         }
       };
-    }])
+    }]);
 
   function _getScale(sizeCss){
     return parseInt(sizeCss.replace(/px|%/, ''), 10);

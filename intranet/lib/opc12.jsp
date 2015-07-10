@@ -2,13 +2,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-<script src="lib/js/mod22.js"></script>
+<script src="lib/js/mod12.js"></script>
 <script type="text/javascript" src="lib/js/angular-scrollable-table.js"></script>
 <link href="css/scrollable-table.css" rel="stylesheet" type="text/css">
  
-<div ng-app="mod22" ng-init="rootWidth=1000">
-	<div ng-controller="centresCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
-		<h2>Gestión de Centros</h2>
+<div ng-app="mod12" ng-init="rootWidth=1000">
+	<div ng-controller="opcCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
+		<h2>Gestión de Interesados</h2>
 
 		<form class="grup form-inline">
 			<div class="form-group">

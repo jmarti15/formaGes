@@ -1,6 +1,25 @@
 'use strict';
 
 //****************************************************************************
+//	http://www.niteshluharuka.com/2012/08/simple-date-validation-using-regex-in-javascript/
+//****************************************************************************
+
+function validaData(data) {
+	if( !data ) return true;
+	//		 	     dd            /   mm          /   yy
+	var re = /([0-3]\d)\/([0-1]\d)\/(\d\d)/;
+	if( re.test(data)){
+		var tokens = data.split('/');
+		var dd = parseInt(tokens[0], 10);
+	    var mm = parseInt(tokens[1], 10);
+	    var yy = parseInt(tokens[2], 10);
+		var dayobj = new Date( yy, mm-1, dd );
+		if ((dayobj.getDate()==dd) && (dayobj.getMonth()+1==mm) && (dayobj.getFullYear().toString().substr(2,2)==yy)) return true;
+	}
+	return false;
+}
+
+//****************************************************************************
 //	https://sites.google.com/site/dwebtodojs/aprendemos-con-ejemplos/6-ejemplo-javascript-formularios-validacion-longitud-email-etc-expresiones-regulares
 //****************************************************************************
 

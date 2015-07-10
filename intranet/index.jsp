@@ -17,10 +17,12 @@
 <%
 /// Mostro tots els paràmetres rebuts (GET+POST)
 ///			CAL:  import = "java.util.Map"	!!!
+/*
 Map<String, String[]> parameters = request.getParameterMap();
 for(String parameter : parameters.keySet())
 	out.println( parameter+"="+request.getParameter(parameter)+"<br/>" );
 out.println("===============================================================<br/>");
+*/
 ///
 
 	// Han pres "Entrar" al formulari de login (està a lib/login.html) ?
@@ -35,8 +37,10 @@ out.println("===============================================================<br/
 	
 	boolean bAccess=false, bAccVal=true, bMostraLoginForm=false, bMostraMenu=false;
 ///
+/*
 out.println("bEntrant="+(bEntrant?"T":"F")+"  bLogin="+(bLogin?"T":"F")+"  bConsulta="+(bConsulta?"T":"F")+
 						  "  bLogout="+(bLogout?"T":"F")+"  bAccess="+(bAccess?"T":"F")+"<br/>");
+*/
 ///
 	HttpSession Sessio=null;
 	String sLlavor="000000", sSessID="", sIP="", sUser="";
@@ -197,22 +201,24 @@ if( sOpcions.length ==2 ) System.out.println( "Opc1: "+sOpcions[1] );
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.min.js"></script>
+	<script src="https://code.angularjs.org/1.3.15/i18n/angular-locale_es-es.js"></script>
 	-->
 	<!-- If you are not sure which module is missing, use the not minified angular.js which gives a readable error message -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.css"></link>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.css"></link>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.css"></link>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.css"></link>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular-sanitize.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.js"></script>
+	<script src="https://code.angularjs.org/1.3.15/i18n/angular-locale_es-es.js"></script>
 
-	<link type="text/css" rel="stylesheet" charset="utf-8" href="css/estil.css">
+	<link type="text/css" rel="stylesheet" href="css/estil.css">
 	<% if(bMostraMenu) { %><link type="text/css" rel="stylesheet" href="css/menu.css">	<% } %>
 	<script type="text/javascript" charset="utf-8" src="lib/js/funcions.js"></script>	
 	<script type="text/javascript" charset="utf-8" src="lib/js/sha2.js"></script>
-	<script language="javascript" type="text/javascript">
+	<script type="text/javascript">
 		<!-- hide this script tag's contents from old browsers
 	
 		function controla(ev) {
@@ -269,7 +275,7 @@ if( sOpcions.length ==2 ) System.out.println( "Opc1: "+sOpcions[1] );
 		<% } %>
 	</div>
 
-	<script language="javascript" type="text/javascript">
+	<script type="text/javascript">
 		<!-- hide this script tag's contents from old browsers
 		// Activem web aquí usant js. Si js no està activat, no permetem login (no pot encriptar pasw)
 		document.getElementById("no_js1").style.display="none";

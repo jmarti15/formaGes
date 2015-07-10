@@ -1,8 +1,8 @@
 "use strict";
 
-var mod21 = angular.module('mod21', ['scrollable-table', 'ui.bootstrap']);
+var mod23 = angular.module('mod23', ['scrollable-table', 'ui.bootstrap']);
 
-mod21.controller('opcCtrl', function($scope, $http, $modal) {
+mod23.controller('opcCtrl', function($scope, $http, $modal) {
 	// Definim la funció dins del controlador
 	/// Ja ho carrega a l'inici
 	
@@ -20,7 +20,7 @@ mod21.controller('opcCtrl', function($scope, $http, $modal) {
     };
 
 	$scope.getFormacions = function() {
-		$http.get("api/formacions.jsp").success( function(data) {
+		$http.get("api/metodcap.jsp").success( function(data) {
 		    $scope.data = data;
 		    $scope.dataKeys = $scope.keys( $scope.data[0] );
 		    $scope.filtered = $scope.data;
@@ -33,7 +33,7 @@ mod21.controller('opcCtrl', function($scope, $http, $modal) {
 
 	$scope.detall = function(dataLin) {
         var modalInstance = $modal.open({
-            templateUrl: 'lib/formacio.html',
+            templateUrl: 'lib/metodcap.html',
             controller: 'detallCtrl',
             size: '',         // large: 'lg'    normal: ''     small: 'sm'
             resolve: {
@@ -51,12 +51,12 @@ mod21.controller('opcCtrl', function($scope, $http, $modal) {
 
 });
 
-mod21.controller('detallCtrl', function($scope, $http, $timeout, $modalInstance, dataDet) {
+mod23.controller('detallCtrl', function($scope, $http, $timeout, $modalInstance, dataDet) {
 //dataDet:	{"Codi":"1","Formación":"Hipo N1"}			mod/del
 //						null																				add
 	if(dataDet){
 		$scope.codi = dataDet.Codi;
-		$scope.nom = dataDet.Formación;
+		$scope.nom = dataDet["Método de captación"];
 	} else {
 		$scope.cod = '';
 		$scope.nom = '';
@@ -79,7 +79,7 @@ mod21.controller('detallCtrl', function($scope, $http, $timeout, $modalInstance,
 	$scope.add = function() {
 		$http({
 		    method: 'POST',
-		    url: "api/formacions.jsp",
+		    url: "api/metodcap.jsp",
 		    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 		    transformRequest: function(obj) {
 		        var str = [];
@@ -103,7 +103,7 @@ mod21.controller('detallCtrl', function($scope, $http, $timeout, $modalInstance,
 	$scope.mod = function() {
 		$scope.delPremut = false;
 
-		$http.put( "api/formacions.jsp", null, {"params":{"codi": $scope.codi, "nom": $scope.nom}} )
+		$http.put( "api/metodcap.jsp", null, {"params":{"codi": $scope.codi, "nom": $scope.nom}} )
 		.success(function(data) {
 			if(data.res > 0) {
 				$modalInstance.close();
@@ -121,7 +121,7 @@ mod21.controller('detallCtrl', function($scope, $http, $timeout, $modalInstance,
 			$scope.delPremut = true;
 			$scope.dangerMsg = 'Pulse otra vez para eliminar';
 		} else {
-			$http.delete( "api/formacions.jsp", {"params":{"codi": $scope.codi}} )
+			$http.delete( "api/metodcap.jsp", {"params":{"codi": $scope.codi}} )
 			.success(function(data) {
 				if(data.res > 0) {
 					$modalInstance.close();

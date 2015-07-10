@@ -1,0 +1,57 @@
+<div class="modal-header">
+	<button class="close" ng-click="cancel()">&times;</button>
+	<h2 class="modal-title" id="myModalLabel">Detalle del Descuento</h2>
+</div>
+
+<div class="modal-body" ng-keydown="execDefault($event)">
+	<form class="form-horizontal">
+  		<div class="form-group" ng-class="{'has-error': campErr[0]}">
+			<label class="col-sm-3 control-label">Nombre</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Nom" maxlength="30" ng-model="data.Nom" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': dataErr || campErr[1]}">
+  			<label class="col-sm-3 control-label">F.Inicial</label>
+			<div class="col-sm-9">
+				<p class="input-group">
+					<input type="text" class="form-control" id="DInicial" date-fix datepicker-popup="dd/MM/yy" ng-model="data.DInicial" is-open="opened" datepicker-options="dateOptions" current-text="Hoy" clear-text="Borrar" close-text="Salir"  ng-change="canvi('data')" ng-keyup="dataKey($event)">
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="dataOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+					</span>
+				</p>
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[2]}">
+			<label  class="col-sm-3 control-label"><input type="radio" ng-model="tipDesc" value="perc" ng-change="canvi('tipDesc')">Porcentaje</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Percent" maxlength="2" ng-model="data.Percent" ng-disabled="tipDesc=='nimp'" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[3]}">
+			<label  class="col-sm-3 control-label"><input type="radio" ng-model="tipDesc" value="nimp" ng-change="canvi('tipDesc')">Nuevo Imp.</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="NouImport" maxlength="5" ng-model="data.NouImport" ng-disabled="tipDesc=='perc'" ng-change="canvi()">
+			</div>
+  		</div>
+ 		<span id="helpBlock" class="help-block">Descuento para centros (Se aplica a partir del núm. de alumnos indicado):</span>
+  		<div class="form-group">
+			<label class="col-sm-3 control-label">Mín.Alum.</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="MinAlumnCentre" maxlength="3" ng-model="data.MinAlumnCentre" ng-change="canvi()">
+			</div>
+  		</div>
+  	</form>
+	<p>{{msgErr}}</p>
+</div>
+
+<div class="modal-footer">
+	<div class="alert alert-danger" role="alert" ng-show="dangerMsg">
+		  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		  {{dangerMsg}}
+	</div>
+	<button class="btn btn-success" ng-show="!codi" ng-click="add()">Añadir</button>
+	<button class="btn btn-info" ng-show="codi" ng-click="mod()">Modificar</button>
+	<button class="btn" ng-class="delPremut ? 'btn-danger' : 'btn-warning'" ng-show="codi" ng-click="del()">Eliminar</button>
+	<button class="btn btn-warning" ng-click="cancel()">Salir</button>
+</div>

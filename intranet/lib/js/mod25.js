@@ -1,24 +1,15 @@
-"use strict";
+'use strict';
 
-var mod11 = angular.module('mod11', ['scrollable-table', 'ui.bootstrap']);
+var mod25 = angular.module('mod25', ['scrollable-table', 'ui.bootstrap']);
 
-mod11.service('func', function($rootScope) {
-	var dades;
-	this.setDades = function(data){
-		dades = data;
-		$rootScope.$broadcast('linSelec');
-	};
-	this.getDades = function(){
-		return dades;
-	};
-	
+mod25.service('func', function() {
     this.keys = function(obj){
         return obj? Object.keys(angular.copy(obj)) : [];
     };
 });
 
 // Al Añadir:  pq mostri la data de la bbdd yyyy-MM-dd amb format dd/MM/yy
-mod11.directive('datepickerPopup', function (dateFilter, datepickerPopupConfig) {
+mod25.directive('datepickerPopup', function (dateFilter, datepickerPopupConfig) {
 	return {
 		restrict: 'A',
 		priority: 1,
@@ -32,7 +23,7 @@ mod11.directive('datepickerPopup', function (dateFilter, datepickerPopupConfig) 
 	};
 });
 
-mod11.controller('opcCtrl', function($scope, $http, func) {
+mod25.controller('opcCtrl', function($scope, $http, $modal, func) {
 	$scope.actualitza = function() {
 		$scope.$broadcast("renderScrollableTable");
 	};
@@ -44,7 +35,7 @@ mod11.controller('opcCtrl', function($scope, $http, func) {
 	};
 
 	$scope.getData = function() {
-		$http.get("api/inscrip.jsp").success( function(data) {
+		$http.get("api/tarifes.jsp").success( function(data) {
 		    $scope.data = data;
 		    $scope.dataKeys = func.keys( $scope.data[0] );
 		    $scope.filtered = $scope.data;
@@ -52,55 +43,55 @@ mod11.controller('opcCtrl', function($scope, $http, func) {
 		});
 	};
 	$scope.getData();
-	
+
 	$scope.detall = function(codi) {
-		if($scope.selected)
-			return;
-		
 		if(codi) {
-			$scope.selected = codi;
- 			$http.get("api/inscrip.jsp?codi="+codi).success( function(data) {
- 				func.setDades( data );
+			$http.get("api/tarifes.jsp?codi="+codi).success( function(data) {
+				$scope.mostraDetall(data);
 			});
 		} else {
-			$scope.selected = '';
-			func.setDades( {} );
+			$scope.mostraDetall(null);
 		}
 	};
 
-	$scope.$on( 'ok', function() {
-		$scope.selected = '';
-		$scope.getData();
-	});
-	$scope.$on( 'cancel', function() {
-		$scope.selected = ''; 
-	});
+	$scope.mostraDetall = function(data) {
+		var modalInstance = $modal.open({
+			templateUrl: 'lib/tarifa.html',
+			controller: 'detallCtrl',
+			size: '',         // large: 'lg'    normal: ''     small: 'sm'
+			resolve: {
+			    dataDet: function () {
+			        return data;
+			    }
+			}
+		});
+		modalInstance.result.then( function() {
+			$scope.getData();
+		}, function () {
+			// cancel
+		});
+	};
 
 });
 
 
-mod11.controller('detallCtrl', function($scope, $http, $modal, func, dateFilter, $rootScope, $timeout) {
-	$scope.detOcult = true;
-///	$scope.aluOcult = true;
+mod25.controller('detallCtrl', function($scope, $http, $timeout, $modalInstance, dateFilter, func, dataDet) {
+// dataDet:	mod/del			{...}
+//						add					null
+	if(dataDet){
+		$scope.codi = dataDet.Codi;
+		$scope.nom = dataDet.Nom;
+		$scope.data = dataDet;
+	} else {
+		$scope.codi = '';
+		$scope.nom = '';
+		$scope.data = {};
+		$scope.data.DInicial = new Date();
+	}
 	
-	
-	$scope.$on( 'linSelec', function() {
-/// ABANS DE CARREGAR  --Comprovar si han fet canvis ???
-		
-		$scope.data = func.getDades();
-		$scope.codi = $scope.data.Codi;
-		$scope.getAlu();						// Alumne
-		$scope.canvi('');						// reset
-		$scope.detOcult = false;		// Mostrem panell
-		
-		$timeout( function() {
-			$('#Data').focus();
-			$('#Data')[0].setSelectionRange(0, 8);
-	      }, 400);		// Esperem a que es renderitzi la finestra modal
-		
-///
-    });
-	
+	$scope.delPremut = false;
+	$scope.dangerMsg = '';
+
 	
 	// Data
 	$scope.dataOpen = function($event) {
@@ -112,7 +103,7 @@ mod11.controller('detallCtrl', function($scope, $http, $modal, func, dateFilter,
 		ev.which = ev.which || ev.keyCode;
    		if( ev.which == 27) $scope.cancel();	//ESC
    		else {
-   			var datEle = document.getElementById('Data');
+   			var datEle = document.getElementById('DInicial');
    			var datLen = datEle.value.length;
    			if( datLen == 2 || datLen == 5 ){		// dd o dd/MM
    				// si acaben de prémer DEL, borrem també un altre caràcter
@@ -122,50 +113,69 @@ mod11.controller('detallCtrl', function($scope, $http, $modal, func, dateFilter,
    			}
    		}
 	};
-
-
-	// Alumne
-	$scope.getAlu = function() {
-		$http.get("api/alumnes.jsp?codi="+$scope.data.Alumne).success( function(data) {
-			$scope.alumne = data;
-			$scope.nomAlu = data.Nom + ' ' + data.Cognoms;
-		});		
-	};
-	$scope.aluDetall = function() {
-		var modalInstance = $modal.open({
-			templateUrl: 'lib/alumne.html',
-			controller: 'detallCtrl',
-			size: '',         // large: 'lg'    normal: ''     small: 'sm'
-			resolve: {
-			    dataDet: function () {
-			        return $scope.alumne;
-			    }
-			}
-		});
-		modalInstance.result.then( function() {
-			$scope.getAlu();
-		}, function () {
-			// cancel
-		});
-	};
 	
+	
+	// Posem el focus al final del camp
+	$timeout( function() {
+		$('#Nom').focus();
+		var strLength= $scope.nom.length;
+		$('#Nom')[0].setSelectionRange(strLength, strLength);
+      }, 400);		// Esperem a que es renderitzi la finestra modal
+
 	
 	$scope.canvi = function(opc) {
 		$scope.delPremut = false;
 		$scope.dangerMsg = '';
 		$scope.campErr=[];	// netegem els errors de camps obligatoris
 		
-///
+		if( opc=='data' ){
+			$scope.dataErr = !validaData( document.getElementById('DInicial').value );
+		}
 	};
 
-
+	
 	$scope.validacions = function() {
 		$scope.campErr = [];		// posarem a true pq s'apliqui la classe has-error (marca el camp en vermell) 
-///
+		
+		if( $scope.dataErr ) {
+			$scope.dangerMsg = "Fecha incorrecta...";
+			$('#DInicial').focus();
+			return false;
+		}
+		
+		var campsOblig = ["Nom","DInicial","Import","NumLinies"];
+		var campDescri = function(camp){
+			var alias =	{"Nom":"Nombre", "DInicial":"F.Inicial", "Import":"Importe", "NumLinies":"Núm.Líneas"};
+			return alias[camp];
+		};
+		$scope.msgErr = '';
+		try {
+			if( !$scope.data ){		// (al Añadir)  No han omplert cap camp
+														// (Els elements de $scope.data es defineixen quan són informats, a l'inici $scope.data val null)
+				$scope.dangerMsg = "Debe rellenar el campo: "+campDescri( campsOblig[0] );
+				$scope.campErr[0] = true;
+				$('#'+campsOblig[0]).focus();
+				return false;
+			} else {
+				for( var i in campsOblig ){
+					var camp = campsOblig[i];
+					var valor = $scope.data[camp];
+					if( !valor ){
+						$scope.dangerMsg = "Debe rellenar el campo: "+campDescri( camp );
+						$scope.campErr[i] = true;
+						$('#'+camp).focus();
+						return false;
+					}
+				}
+			}
+		}
+		catch(err) {
+			 $scope.msgErr = 'Error:' + err.message;
+		}
 		
 		// Formategem la data per guardar-la a la bbdd
 		//http://stackoverflow.com/questions/18061757/angular-js-and-html5-date-input-value-how-to-get-firefox-to-show-a-readable-d
-		$scope.data.Data = dateFilter( $scope.data.Data, 'yyyy-MM-dd' );
+		$scope.data.DInicial = dateFilter( $scope.data.DInicial, 'yyyy-MM-dd' );
 
 		return true;	//ok
 	};
@@ -174,10 +184,10 @@ mod11.controller('detallCtrl', function($scope, $http, $modal, func, dateFilter,
 	$scope.add = function() {
 		if( !$scope.validacions() ) return;
 		
-		$http.post("api/inscrip.jsp", null, {"params":{"data": $scope.data}} )
+		$http.post("api/tarifes.jsp", null, {"params":{"data": $scope.data}} )
 		.success( function(data) {
 			if(data.res > 0) {
-				$scope.ok();
+				$modalInstance.close();
 			} else {
 				$scope.dangerMsg = "Error de Base de Datos...";
 			}
@@ -192,10 +202,10 @@ mod11.controller('detallCtrl', function($scope, $http, $modal, func, dateFilter,
 		$scope.delPremut = false;
 		if( !$scope.validacions() ) return;
 
-		$http.put("api/inscrip.jsp", null, {"params":{"data": $scope.data}} )
+		$http.put("api/tarifes.jsp", null, {"params":{"data": $scope.data}} )
 		.success(function(data) {
 			if(data.res > 0) {
-				$scope.ok();
+				$modalInstance.close();
 			} else {
 				$scope.dangerMsg = "Error de Base de Datos...";
 			}
@@ -214,10 +224,10 @@ mod11.controller('detallCtrl', function($scope, $http, $modal, func, dateFilter,
 			$scope.delPremut = true;
 			$scope.dangerMsg = 'Pulse otra vez para eliminar';
 		} else {
-			$http.delete("api/inscrip.jsp", {"params":{"codi": $scope.codi}})
+			$http.delete("api/tarifes.jsp", {"params":{"codi": $scope.codi}})
 			.success(function(data) {
 				if(data.res > 0) {
-					$scope.ok();
+					$modalInstance.close();
 				} else {
 					$scope.dangerMsg = "Error de Base de Datos...";
 				}
@@ -229,16 +239,10 @@ mod11.controller('detallCtrl', function($scope, $http, $modal, func, dateFilter,
 	};
 
 	
-    $scope.ok = function () {
-    	$scope.detOcult = true;
-    	$rootScope.$broadcast('ok');
-    };
     $scope.cancel = function () {
-/// ABANS DE TANCAR  --Comprovar si han fet canvis ???
-    	$scope.detOcult = true;
-    	$rootScope.$broadcast('cancel');
+        $modalInstance.dismiss('cancel');
     };
-	
+    
 
     $scope.execDefault = function (ev) {
     	// Definim un botó per defecte
@@ -249,17 +253,4 @@ mod11.controller('detallCtrl', function($scope, $http, $modal, func, dateFilter,
        	}
     };
 
-/*    
-    // Detall alumne
-    $scope.aluMod = function () {
-    	
-    };
-    $scope.aluCancel = function () {
-    	$scope.aluOcult = true;
-    };
-*/
-
-    
-    
-    
 });

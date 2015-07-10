@@ -1,14 +1,29 @@
 'use strict';
 
-var mod22 = angular.module('mod22', ['scrollable-table', 'ui.bootstrap']);
+var mod12 = angular.module('mod12', ['scrollable-table', 'ui.bootstrap']);
 
-mod22.service('func', function() {
+mod12.service('func', function() {
     this.keys = function(obj){
         return obj? Object.keys(angular.copy(obj)) : [];
     };
 });
 
-mod22.controller('centresCtrl', function($scope, $http, $modal, func) {
+// Al Añadir:  pq mostri la data de la bbdd yyyy-MM-dd amb format dd/MM/yy
+mod12.directive('datepickerPopup', function (dateFilter, datepickerPopupConfig) {
+	return {
+		restrict: 'A',
+		priority: 1,
+		require: 'ngModel',
+		link: function(scope, element, attr, ngModel) {
+	    	var dateFormat = attr.datepickerPopup || datepickerPopupConfig.datepickerPopup;
+  			ngModel.$formatters.push(function (value) {
+  				return dateFilter(value, dateFormat);
+  			});
+	    }
+	};
+});
+
+mod12.controller('opcCtrl', function($scope, $http, $modal, func) {
 	$scope.actualitza = function() {
 		$scope.$broadcast("renderScrollableTable");
 	};
@@ -19,19 +34,19 @@ mod22.controller('centresCtrl', function($scope, $http, $modal, func) {
 		}
 	};
 
-	$scope.getCentres = function() {
-		$http.get("api/centres.jsp").success( function(data) {
+	$scope.getData = function() {
+		$http.get("api/interessats.jsp").success( function(data) {
 		    $scope.data = data;
 		    $scope.dataKeys = func.keys( $scope.data[0] );
 		    $scope.filtered = $scope.data;
 		    $scope.search = '';     // set the default search/filter term
 		});
 	};
-	$scope.getCentres();
+	$scope.getData();
 
 	$scope.detall = function(codi) {
 		if(codi) {
-			$http.get("api/centres.jsp?codi="+codi).success( function(data) {
+			$http.get("api/interessats.jsp?codi="+codi).success( function(data) {
 				$scope.mostraDetall(data);
 			});
 		} else {
@@ -41,8 +56,8 @@ mod22.controller('centresCtrl', function($scope, $http, $modal, func) {
 
 	$scope.mostraDetall = function(data) {
 		var modalInstance = $modal.open({
-			templateUrl: 'lib/centre.html',
-			controller: 'centreDetallCtrl',
+			templateUrl: 'lib/interessat.html',
+			controller: 'detallCtrl',
 			size: '',         // large: 'lg'    normal: ''     small: 'sm'
 			resolve: {
 			    dataDet: function () {
@@ -51,7 +66,7 @@ mod22.controller('centresCtrl', function($scope, $http, $modal, func) {
 			}
 		});
 		modalInstance.result.then( function() {
-			$scope.getCentres();
+			$scope.getData();
 		}, function () {
 			// cancel
 		});
@@ -60,23 +75,49 @@ mod22.controller('centresCtrl', function($scope, $http, $modal, func) {
 });
 
 
-mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalInstance, func, dataDet) {
+mod12.controller('detallCtrl', function($scope, $http, $timeout, $modalInstance, dateFilter, func, dataDet) {
 // dataDet:	mod/del			{"Codi":"1","Nom":"Un punt de llum","Contacte":"Xus, Agnès i Mónica","Telef1":"666 12 23 34","Telef2":"777 123 456",
 //													"Email":"llum@gmail.com","Adre":"Llevant, 2","CP":"08144","Prov":"Barcelona","Pobl":"Mediona",
 //													"Coment":"Espai de trobada de Mediona","NomAdmin":"Xus","NIFAdmin":"39702772B"}
 //						add					null
-	$scope.data = dataDet;
+
 	if(dataDet){
+		$scope.data = dataDet;
 		$scope.codi = dataDet.Codi;
-		$scope.nom = dataDet.Nom;
 	} else {
 		$scope.codi = '';
-		$scope.nom = '';
+		$scope.data = {};
+		$scope.data.DAlta = new Date();
 	}
+	$scope.dAlta = $scope.data.DAlta;
 	
 	$scope.delPremut = false;
 	$scope.dangerMsg = '';
 
+	
+	// Data alta
+	$scope.dataOpen = function($event) {
+	    $event.preventDefault();
+	    $event.stopPropagation();
+	    $scope.opened = true;
+	};
+	$scope.dataKey = function(ev){
+		ev.which = ev.which || ev.keyCode;
+   		if( ev.which == 27) $scope.cancel();	//ESC
+   		else {
+   			var datEle = document.getElementById('DAlta');
+   			var datLen = datEle.value.length;
+   			if( datLen == 2 || datLen == 5 ){		// dd o dd/MM
+   				// si acaben de prémer DEL, borrem també un altre caràcter
+   				if( ev.which == 8 ) datEle.value = datEle.value.substring(0,datLen-1);
+   				// si acaben d'entrar un nombre, afegim la /
+   											else datEle.value = datEle.value + '/';
+   			}
+   		}
+	};
+
+
+	// Població
 	$scope.deplegaPobl = false;
 	$scope.carregaCodPobl = function(param){
 		$http.get("api/poblacions.jsp?"+param).success( function(data) {
@@ -102,9 +143,9 @@ mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalIns
 	
 	// Posem el focus al final del camp
 	$timeout( function() {
-		$('#Nom').focus();
-		var strLength= $scope.nom.length;
-		$('#Nom')[0].setSelectionRange(strLength, strLength);
+		$('#DAlta').focus();
+		var strLength= $scope.dAlta.length;
+		$('#DAlta')[0].setSelectionRange(strLength, strLength);
       }, 400);		// Esperem a que es renderitzi la finestra modal
 
 	
@@ -116,9 +157,9 @@ mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalIns
 		if( opc=='email' ){
 			if( $scope.campErr ) $scope.campErr[3] = false;
 			$scope.emailErr =  !validateEmail( $scope.data.Email );
-			
-		} else if( opc=='nif' ){
-			$scope.nifErr = !validaNifNie( $scope.data.NIFAdmin );
+
+		} else if( opc=='data' ){
+			$scope.dataErr = !validaData( document.getElementById('DAlta').value );
 			
 		} else if( opc=='cp' ){
 			if( $scope.campErr ) $scope.campErr[5] = false;
@@ -166,27 +207,27 @@ mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalIns
 			return false;
 		}
 
+		if( $scope.dataErr ) {
+			$scope.dangerMsg = "Fecha incorrecta...";
+			$('#DAlta').focus();
+			return false;
+		}
+		
 		if( $scope.cpErr ) {
 			$scope.dangerMsg = "Código Postal incorrecto...";
 			$('#CodPos').focus();
 			return false;
 		}
-		
-		if( $scope.nifErr ) {
-			$scope.dangerMsg = "NIF o NIE incorrecto...";
-			$('#NIFAdmin').focus();
-			return false;
-		}
 
-		var campsOblig = ["Nom","Contacte","Telef1","Email","Adre","CodPobl"];
+		var campsOblig = ["DAlta","Nom","Cognoms","Telef1","Email","Adre","CodPobl"];
 		var campDescri = function(camp){
 /*keysDB -Codi:			
 			[Nom, Contacte, Telef1, Telef2, Email, Adre, CodPos, Prov, Pobl, Coment, NomAdmin, NIFAdmin]
 		alias:
 			["Centro", "Contacto", "Teléfono 1", "Teléfono 2", "eMail", "Dirección", "C.Postal", "Provincia", "Población", "Comentarios", "Administrador", "NIF admin."]
 */
-			var alias =	{"Nom":"Nombre", "Contacte":"Contacto", "Telef1":"Teléfono 1", "Telef2":"Teléfono 2", "Email":"eMail", "Adre":"Dirección", "CP":"C.Postal", 
-			 "Pobl":"Población", "Coment":"Comentarios", "NomAdmin":"Administrador", "NIFAdmin":"NIF admin.", "CodPobl":"C.Postal / Población"};
+			var alias =	{"DAlta":"F.Alta","Nom":"Nombre", "Cognoms":"Apellidos", "Telef1":"Teléfono 1", "Telef2":"Teléfono 2", "Email":"eMail", "Adre":"Dirección", 
+									"CP":"C.Postal","Pobl":"Población", "Coment":"Comentarios", "CodPobl":"C.Postal / Población"};
 			return alias[camp];
 		};
 		$scope.msgErr = '';
@@ -214,6 +255,10 @@ mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalIns
 			 $scope.msgErr = 'Error:' + err.message;
 		}
 		
+		// formategem la data per guardar-la a la bbdd
+		//http://stackoverflow.com/questions/18061757/angular-js-and-html5-date-input-value-how-to-get-firefox-to-show-a-readable-d
+		$scope.data.DAlta = dateFilter( $scope.data.DAlta, 'yyyy-MM-dd' );
+		
 		return true;	//ok
 	};
 	
@@ -221,7 +266,7 @@ mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalIns
 	$scope.add = function() {
 		if( !$scope.validacions() ) return;
 		
-		$http.post("api/centres.jsp", null, {"params":{"data": $scope.data}} )
+		$http.post("api/interessats.jsp", null, {"params":{"data": $scope.data}} )
 		.success( function(data) {
 			if(data.res > 0) {
 				$modalInstance.close();
@@ -239,7 +284,7 @@ mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalIns
 		$scope.delPremut = false;
 		if( !$scope.validacions() ) return;
 
-		$http.put("api/centres.jsp", null, {"params":{"data": $scope.data}} )
+		$http.put("api/interessats.jsp", null, {"params":{"data": $scope.data}} )
 		.success(function(data) {
 			if(data.res > 0) {
 				$modalInstance.close();
@@ -261,7 +306,7 @@ mod22.controller('centreDetallCtrl', function($scope, $http, $timeout, $modalIns
 			$scope.delPremut = true;
 			$scope.dangerMsg = 'Pulse otra vez para eliminar';
 		} else {
-			$http.delete("api/centres.jsp", {"params":{"codi": $scope.codi}})
+			$http.delete("api/interessats.jsp", {"params":{"codi": $scope.codi}})
 			.success(function(data) {
 				if(data.res > 0) {
 					$modalInstance.close();

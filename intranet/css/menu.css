@@ -72,13 +72,14 @@ ul, ol {
     background: url("../img/item_menu_sup.jpg") no-repeat scroll center bottom transparent;    
 }
 .nav li ul {
-	display: none; /*	display:none;		SIIIIII   ************************************/
+	display: none;
 	position: absolute;
 	min-width: 200px;
 	background-color: #000;
 	color: #fff;
 	border-radius: 5px;
 	padding: 5px;
+	z-index: 9;
 }
 .nav li ul button      																									       , .nav li ul a {
 	background: url("../img/item_submenu_top.jpg") no-repeat scroll left 7px top 8px transparent;

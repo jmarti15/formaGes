@@ -17,9 +17,9 @@
 			sSql = "SELECT C.Codi, C.Nom as Centro, Contacte as Contacto, Telef1 as Teléfono, Email as eMail, Adre as Dirección, P.Nom as Población ";
 			sSql += "FROM Centres C JOIN Poblacions P ON C.CodPobl = P.Codi";
 			jsonString = sSelect2Json( sSql, false );
-		} else if(sCodi.equals("keys")) {			// keys				//+++++ NO CRIDAT
-			sSql = "SELECT * FROM Centres LIMIT 1";
-			jsonString = sKeys2Json( sSql );
+		} else if(sCodi.equals("combo")) {		// pel desplegable
+			sSql = "SELECT Codi, Nom FROM Centres";
+			jsonString = sSelect2Json( sSql, false );
 		} else {												// pel form
 			/*
 			SELECT Codi, Nom, Contacte, Telef1, Telef2, Email, Adre, CodPobl, Coment, NomAdmin, NIFAdmin 

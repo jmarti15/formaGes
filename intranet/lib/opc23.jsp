@@ -1,14 +1,14 @@
-<!-- Centres  -->
+<!-- Formacions  -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-<script src="lib/js/mod22.js"></script>
+<script src="lib/js/mod23.js"></script>
 <script type="text/javascript" src="lib/js/angular-scrollable-table.js"></script>
 <link href="css/scrollable-table.css" rel="stylesheet" type="text/css">
  
-<div ng-app="mod22" ng-init="rootWidth=1000">
-	<div ng-controller="centresCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
-		<h2>Gestión de Centros</h2>
+<div ng-app="mod23" ng-init="rootWidth=600">
+	<div ng-controller="opcCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
+		<h2>Gestión de Métodos de captación</h2>
 
 		<form class="grup form-inline">
 			<div class="form-group">
@@ -16,7 +16,7 @@
 					<span class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
 					<input type="text" class="form-control" placeholder="Buscar" ng-model="search" ng-change="actualitza()">
 					<span class="input-group-btn" ng-click="neteja()">
-				    		<button class="btn btn-default" type="button"><strong>&times;</strong></button>
+				    	<button class="btn btn-default" type="button"><strong>&times;</strong></button>
 					</span>
 				</div>
 				<button class="btn btn-success" ng-click="detall(null)">Añadir</button>
@@ -28,7 +28,7 @@
 			document.onkeydown = function (ev) {
 				var ret = true;
 				ev.which = ev.which || ev.keyCode;
-				if(ev.which == 13 && ev.target.type != 'textarea') ret = false;	// accepto els Return's als camps textarea (Coment, ...)
+		   		if(ev.which == 13) ret = false;
 		   		return ret;
 			}
 		</script>
@@ -41,8 +41,8 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="dataLin in data | filter:search" row-id="{{dataLin.Codi}}" ng-class="{info: selected == dataLin.Codi}" ng-click="detall(dataLin.Codi)">
-						<td ng-repeat="key in dataKeys"  ng-hide="key == 'Codi'">{{dataLin[key]}}</td>
+					<tr ng-repeat="dataLin in data | filter:search" row-id="{{dataLin.Codi}}" ng-class="{info: selected == dataLin.Codi}" ng-click="detall(dataLin)">
+						<td ng-repeat="key in dataKeys" ng-hide="key == 'Codi'">{{dataLin[key]}}</td>
 					</tr>
 				</tbody>
 			</table>

@@ -2,13 +2,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-<script src="lib/js/mod22.js"></script>
+<script src="lib/js/mod24.js"></script>
 <script type="text/javascript" src="lib/js/angular-scrollable-table.js"></script>
 <link href="css/scrollable-table.css" rel="stylesheet" type="text/css">
  
-<div ng-app="mod22" ng-init="rootWidth=1000">
-	<div ng-controller="centresCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
-		<h2>Gestión de Centros</h2>
+<div ng-app="mod24" ng-init="rootWidth=1000">
+	<div ng-controller="opcCtrl" class="container" ng-style="{'width': rootWidth+'px'}">
+		<h2>Gestión de Cursos</h2>
 
 		<form class="grup form-inline">
 			<div class="form-group">
@@ -42,7 +42,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="dataLin in data | filter:search" row-id="{{dataLin.Codi}}" ng-class="{info: selected == dataLin.Codi}" ng-click="detall(dataLin.Codi)">
-						<td ng-repeat="key in dataKeys"  ng-hide="key == 'Codi'">{{dataLin[key]}}</td>
+						<td ng-repeat="key in dataKeys" ng-hide="key == 'Codi'">{{dataLin[key]}}</td>
 					</tr>
 				</tbody>
 			</table>

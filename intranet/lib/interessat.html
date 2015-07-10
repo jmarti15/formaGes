@@ -1,0 +1,86 @@
+<div class="modal-header">
+	<button class="close" ng-click="cancel()">&times;</button>
+	<h2 class="modal-title" id="myModalLabel">Detalle del Interesado</h2>
+</div>
+
+<div class="modal-body" ng-keydown="execDefault($event)">
+	<form class="form-horizontal">
+  		<div class="form-group" ng-class="{'has-error': dataErr || campErr[0]}">
+  			<label class="col-sm-3 control-label">F.Alta</label>
+			<div class="col-sm-9">
+				<p class="input-group">
+					<input type="text" class="form-control" id="DAlta" date-fix datepicker-popup="dd/MM/yy" ng-model="data.DAlta" is-open="opened" datepicker-options="dateOptions" current-text="Hoy" clear-text="Borrar" close-text="Salir"  ng-change="canvi('data')" ng-keyup="dataKey($event)">
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="dataOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+					</span>
+				</p>
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[1]}">
+			<label class="col-sm-3 control-label">Nombre</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Nom" maxlength="30" ng-model="data.Nom" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[2]}">
+			<label class="col-sm-3 control-label">Apellidos</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Cognoms" maxlength="30" ng-model="data.Cognoms" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[3]}">
+			<label class="col-sm-3 control-label">Teléfonos</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control form-lin2" id="Telef1" maxlength="15" ng-model="data.Telef1" ng-change="canvi()">
+				<input type="text" class="form-control form-lin2" style="border-color: #CCC;" maxlength="15" ng-model="data.Telef2" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': emailErr || campErr[4]}">
+			<label class="col-sm-3 control-label">eMail</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Email" maxlength="30" ng-model="data.Email" ng-change="canvi('email')">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[5]}">
+			<label class="col-sm-3 control-label">Dirección</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="Adre" maxlength="30" ng-model="data.Adre" ng-change="canvi()">
+			</div>
+  		</div>
+  		<div class="form-group" ng-class="{'has-error': campErr[6]}">
+  			<label class="col-sm-3 control-label">C.Postal</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="CodPobl" maxlength="5" ng-model="codPos" ng-change="canvi('cp')">
+			</div>
+			<label class="col-sm-3 control-label">Población</label>
+			<div class="col-sm-9">
+      			<p ng-hide="deplegaPobl" class="form-control-static">{{pobl}}</p>
+				<select class="form-control" id="Poble" ng-show="deplegaPobl" ng-model="data.CodPobl" ng-options="poblacio.Codi as poblacio.Pobl for poblacio in poblacions" ng-change="canvi('pobl')" ng-keyup="canvi('pobl')">
+					<option value=""></option>
+				</select>
+			</div>
+			<label ng-show="prov" class="col-sm-3 control-label">Provincia</label>
+			<div class="col-sm-9">
+      			<p class="form-control-static">{{prov}}</p>
+      		</div>
+      	</div>
+  		<div class="form-group">
+			<label class="col-sm-3 control-label">Comentarios</label>
+			<div class="col-sm-9">
+				<textarea rows="2" class="form-control" ng-model="data.Coment" ng-change="canvi()"></textarea>
+			</div>
+  		</div>
+  	</form>
+	<p>{{msgErr}}</p>
+</div>
+
+<div class="modal-footer">
+	<div class="alert alert-danger" role="alert" ng-show="dangerMsg">
+		  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		  {{dangerMsg}}
+	</div>
+	<button class="btn btn-success" ng-show="!codi" ng-click="add()">Añadir</button>
+	<button class="btn btn-info" ng-show="codi" ng-click="mod()">Modificar</button>
+	<button class="btn" ng-class="delPremut ? 'btn-danger' : 'btn-warning'" ng-show="codi" ng-click="del()">Eliminar</button>
+	<button class="btn btn-warning" ng-click="cancel()">Salir</button>
+</div>
